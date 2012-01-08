@@ -5,28 +5,20 @@
 #include "aes256gcm.h"
 #include "unload64.h"
 #include "load64.h"
-void crypto_secretbox_aes256gcm(unsigned char *c, unsigned char *m,
+/*This function uses 12 byte nonces. This is for validation: the real
+  functions have yet to be written*/
+void aes256gcmcrypt(unsigned char *c, unsigned char *m,
                                 unsigned long long mlen,
                                 unsigned char *nonce,
                                 unsigned char *key){
   unsigned char zeros[16];
   unsigned char h[16];
-  unsigned char j0[16];
   unsigned int  space[AES_SPACEINTS];
   ghash_ctx ctx;
   unsigned long long place;
   unsigned char lastblock[16];
   unsigned char lenblock[16];
   unsigned char tag[16];
-  j0[0]='U';
-  j1[1]='o';
-  j2[2]='f';
-  j3[3]='C';
-  memcpy(j0+4, nonce, 8);
-  j0[12]=0;
-  j0[13]=0;
-  j0[14]=0;
-  j0[15]=1;
   for(int i=0; i<16; i++){
     zeros[i]=0;
   }
@@ -36,7 +28,7 @@ void crypto_secretbox_aes256gcm(unsigned char *c, unsigned char *m,
   aeskey(space, key);
   aescrypt(h, zeros, space);
   /*I ought to have aes_ctr take space: no point in redundent scheduling*/
-  aes256ctr(c,m,mlen, key, j0);
+  aes256ctr(c,m,mlen, key, nonce);
   /*At this point the first 16 bytes of c are AES(k, j0). The rest are
     the ciphertext.*/
   for(int i=0; i<16; i++)
