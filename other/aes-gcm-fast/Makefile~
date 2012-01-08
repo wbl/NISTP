@@ -1,0 +1,31 @@
+QHASM = /bin/qhasm/qhasm-amd64
+MAQ = /bin/maq/maq
+
+name = aes-gcm
+type = sync-ae
+std = -ansi
+
+srcdir = .
+root := $(shell \
+  cd "$(srcdir)"; root="$(srcdir)"; \
+  while [ "`pwd`" != "/" ]; do \
+    if [ -r "`pwd`/test/ecrypt-test.mk" ]; then  \
+      echo $$root; exit; \
+    fi; \
+    cd ..; root="$$root"/..; \
+  done; \
+  echo ".")
+
+include $(root)/test/ecrypt-test.mk
+
+aes-gcm.s: process_bytes.s keysetup-vul.s sbox.s consts.s consts-gcm.s authenticate.s tablesetup.s wrapper.s redtable.s finalmul.s
+	cat $^ > $@
+
+%.s: %.q
+	$(QHASM) < $< > $@
+
+%.q: %.pq
+	$(MAQ) $< > $@
+
+%.s: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -S $^ -o $@

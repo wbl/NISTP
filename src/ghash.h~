@@ -1,0 +1,12 @@
+typedef struct { /*Our strategy is to use precomputed tables*/
+  unsigned long long hplo[128];
+  unsigned long long hphi[128];
+  unsigned long long xlo;
+  unsigned long long xhi;
+} ghash_ctx;
+extern void ginit(ghash_ctx *ctx, unsigned long long hhi,
+                  unsigned long long hlo);
+extern void gupdate(ghash_ctx *ctx, unsigned long long bhi,
+                    unsigned long long blo);
+extern void gfinal(unsigned long long *outhi, unsigned long long *outlo,
+                   ghash_ctx *ctx);

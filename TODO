@@ -1,0 +1,2 @@
+*do validation of implementation ala NIST (not that hard, really)
+*implement GCM (all parts work, just need load long long and some code)
