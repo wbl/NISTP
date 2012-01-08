@@ -1,5 +1,0 @@
-extern void aes256ctr(unsigned char *out, unsigned char *in,
-                      unsigned int len, unsigned char *key,
-                      unsigned char *block);
-#define CTRBLOCKBYTES 16
-#define CTRKEYBTYES 32
