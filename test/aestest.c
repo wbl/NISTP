@@ -11,7 +11,7 @@ int main(int argc, char *argv[]){
   unsigned char key[32];
   unsigned char pt[16];
   unsigned char ct[16];
-  memset(key, 0xff, 32);
+  memset(key, 0x00, 32);
   bzero(space, 60);
   bzero(pt, 16);
   aeskey(space, key);

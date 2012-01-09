@@ -1,4 +1,5 @@
 #include<string.h>
+#include<stdio.h>
 #include "ctr.h"
 #include "aes.h"
 void incr(unsigned char *block);
@@ -13,7 +14,9 @@ void aes256ctr(unsigned char *out, unsigned char *in,
   aeskey(state, key);
   for(place=0; place<len; place+=16){
     aescrypt(tempblock, inblock, state);
-    for(int i=0; i<16; i++) out[place+i]=in[place+i]^tempblock[i];
+    for(int i=0; i<16; i++){
+      out[place+i]=in[place+i]^tempblock[i];
+    }
     incr(inblock);
   }
   aescrypt(tempblock, inblock, state);

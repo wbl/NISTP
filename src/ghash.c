@@ -13,7 +13,7 @@ void ginit(ghash_ctx *ctx, unsigned char *h){
     unsigned long long lowbit = hlo & 0x0000000000000001ULL;
     hlo=carry|(hlo>>1);
     /*now to do the reduction*/
-    unsigned long R = 0xe100000000000000ULL;
+    unsigned long long R = 0xe100000000000000ULL;
     hhi ^= lowbit*R;
   }
   ctx->xlo=0;

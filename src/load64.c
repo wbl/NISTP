@@ -1,4 +1,4 @@
-unsigned long long load64(const char *y){
+unsigned long long load64(const unsigned char *y){
   unsigned long long r=0;
   r = y[7];
   r <<=8;

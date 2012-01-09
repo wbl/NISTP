@@ -1,0 +1,1 @@
+cp Makefile.mk bin/Makefile
