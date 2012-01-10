@@ -93,6 +93,6 @@ void gf2128packcoeffs(unsigned char *dest, gf2128 *x){
   memcpy(dest, x->c, 128);
 }
 
-void gf2128loadcoeffs(gf2128 *x, unsigned char *src){
+void gf2128unpackcoeffs(gf2128 *x, unsigned char *src){
   memcpy(x->c, src, 128);
 }

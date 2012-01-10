@@ -1,17 +1,17 @@
 void unload64(unsigned char *y, unsigned long long x){
-  *y++=x;
+  y[7]=x;
   x>>=8;
-  *y++=x;
+  y[6]=x;
   x>>=8;
-  *y++=x;
+  y[5]=x;
   x>>=8;
-  *y++=x;
+  y[4]=x;
   x>>=8;
-  *y++=x;
+  y[3]=x;
   x>>=8;
-  *y++=x;
+  y[2]=x;
   x>>=8;
-  *y++=x;
+  y[1]=x;
   x>>=8;
-  *y++=x;
+  y[0]=x;
 }

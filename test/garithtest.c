@@ -11,10 +11,10 @@ int main(int argc, int argv[]){
   unsigned char coeffs[128];
   bzero(coeffs,128);
   coeffs[1]=1;
-  gf2128loadcoeffs(&elt, coeffs);
+  gf2128unpackcoeffs(&elt, coeffs);
   gf2128zero(&pow);
   gf2128add(&pow, &pow, &elt);
-  printf("xpows=[");
+  printf("xpows=[1,");
   for(int i=1; i<1024; i++){
     gf2128packcoeffs(coeffs, &pow);
     for(int j=0; j<127; j++){

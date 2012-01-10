@@ -11,6 +11,7 @@ int main(int argc, char *argv[]){
                          0x00, 0x00, 0x00, 0x00};
   unsigned char m[32];
   bzero(m, 32);
+  m[16]=1;
   unsigned char mlen=32;
   unsigned char c1[32];
   unsigned char c2[32];
