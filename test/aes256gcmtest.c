@@ -34,5 +34,10 @@ int main(int argc, char *argv[]){
   }else {
     printf("success!\n");
   }
+  if(aes256gcmdecrypt(m, c2, mlen, nonce, key)){
+    printf("failure!\n");
+  }else {
+    printf("success!\n");
+  }
   exit(0);
 }
