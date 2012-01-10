@@ -1,6 +1,7 @@
 #include<strings.h>
 #include "ctr.h"
 #include "aes.h"
+#include "garith.h"
 #include "ghash.h"
 #include "aes256gcm.h"
 #include "unload64.h"
