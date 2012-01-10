@@ -1,2 +1,4 @@
 *do validation of implementation ala NIST (not that hard, really)
-*implement GCM (all parts work, just need load long long and some code)
+*refactor GCM
+*increase testing thoroughness to check vs LibTomCrypt.
+*add ECC, possibly adding more direcotries for source
