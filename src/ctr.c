@@ -12,7 +12,7 @@ void aes256ctr(unsigned char *out, unsigned char *in,
   unsigned long long  place;
   memcpy(inblock, icb, 16);
   aeskey(state, key);
-  for(place=0; place<len; place+=16){
+  for(place=0; place+15<len; place+=16){
     aescrypt(tempblock, inblock, state);
     for(int i=0; i<16; i++){
       out[place+i]=in[place+i]^tempblock[i];

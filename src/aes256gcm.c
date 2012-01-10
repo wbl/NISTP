@@ -1,4 +1,5 @@
 #include<strings.h>
+#include <stdio.h> //debugging
 #include "ctr.h"
 #include "aes.h"
 #include "garith.h"
@@ -21,6 +22,7 @@ void aes256gcmcrypt(unsigned char *c, unsigned char *m,
   unsigned char lastblock[16];
   unsigned char lenblock[16];
   unsigned char tag[16];
+  bzero(lastblock, 16);
   memcpy(j0, nonce, 12);
   j0[12]=0;
   j0[13]=0;
@@ -38,19 +40,18 @@ void aes256gcmcrypt(unsigned char *c, unsigned char *m,
   aes256ctr(c,m,mlen, key, j0);
   /*At this point the first 16 bytes of c are AES(k, j0). The rest are
     the ciphertext.*/
-  for(int i=0; i<16; i++)
-    lastblock[i]=0;
   ginit(&ctx, h);
   /*Now the loop: feed in the ciphertext*/
-  for(place=16; place<mlen; place+=16)
+  for(place=16; place+15<mlen; place+=16){
     gupdate(&ctx, c+place);
+  }
   if(place<mlen){
-    for(int i=place; i<mlen; i++) //only up to 16
-      lastblock[i]=c[i];
+    for(unsigned long long i=place; i<mlen; i++) //only up to 16
+      lastblock[i-place]=c[i];
     gupdate(&ctx, lastblock);
   }
   unload64(lenblock, 0);
-  unload64(lenblock+8, mlen-16); //no associated data
+  unload64(lenblock+8, 8*(mlen-16)); //no associated data
   gupdate(&ctx, lenblock);
   gfinal(tag, &ctx);
   /*add encrypted tag to message*/

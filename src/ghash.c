@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "garith.h"
 #include "ghash.h"
 void ginit(ghash_ctx *ctx, unsigned char *h){
