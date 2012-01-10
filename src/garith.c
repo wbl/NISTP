@@ -75,7 +75,7 @@ void gf2128mul(gf2128 *c, gf2128 *a, gf2128 *b){
     gf2128mulx(&temp,&V);
     gf2128mov(&V, &temp);
   }
-  gf2128mov(&c, &Z);
+  gf2128mov(c, &Z);
 }
 void gf2128pack(unsigned char *p, gf2128 *x){
   for(int i=0; i<16; i++){
