@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<strings.h>
+#include<stdlib.h>
 #include "aes256gcm.h"
 #include "aes256gcmtom.h"
 int main(int argc, char *argv[]){
@@ -34,7 +35,13 @@ int main(int argc, char *argv[]){
   }else {
     printf("success!\n");
   }
-  if(aes256gcmdecrypt(m, c2, mlen, nonce, key)){
+  if(aes256gcmdecrypt(m, c2, mlen, nonce, key)){ /*someone else made it*/
+    printf("failure!\n");
+  }else {
+    printf("success!\n");
+  }
+  c2[1]=0; /*Screw stuff*/
+  if(! aes256gcmdecrypt(m, c2, mlen, nonce, key)){
     printf("failure!\n");
   }else {
     printf("success!\n");
