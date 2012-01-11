@@ -9,11 +9,11 @@ void crypto_secretbox_aes256gcm (unsigned char *c, unsigned char *m,
   j0[1]='o';
   j0[2]='f';
   j0[3]='C';
-  memcpy(j0+4, n);
-  aes256gcm(c, m, mlen, n, k);
+  memcpy(j0+4, n,12);
+  aes256gcmcrypt(c, m, mlen, n, k);
 }
 
-void crypto_secretbox_open_aes256gcm(unsigned char *m, unsigned char *c,
+int crypto_secretbox_open_aes256gcm(unsigned char *m, unsigned char *c,
                                      unsigned long long clen,
                                      unsigned char *n,
                                      unsigned char *k){
@@ -22,6 +22,6 @@ void crypto_secretbox_open_aes256gcm(unsigned char *m, unsigned char *c,
   j0[1]='o';
   j0[2]='f';
   j0[3]='C';
-  memcpy(j0+4, n);
+  memcpy(j0+4, n,12);
   return aes256gcmdecrypt(m,c, clen, n, k);
 }
