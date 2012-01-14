@@ -1,6 +1,9 @@
 NISTP
 =====
 
-NISTP is an implementation of P256, AES256GCM and combines them into
-an easy to use secure function. It is very much a work in progress right
-now.
+NISTP is an implementation of elliptic curve cryptography designed to be easy
+to use. Similar to NaCl, with which I hope to integrate it sometime, it
+combines authentication and encryption into a single function, making
+cryptography easy to use. NISTP will put together the elliptic curve P256,
+AES256 and the Galois/Counter authenticated encryption mode. So far AES256GCM
+is working, but slowly and with leakes, and P256 remains to be implemented.
