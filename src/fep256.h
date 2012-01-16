@@ -1,5 +1,5 @@
 typedef struct {
-  uint64_t c[11]; /*Using slow but working algorithms*/
+  uint64_t c[11];
 } fep256;
 extern void fep256add(fep256 *c, fep256 *a, fep256 *b);
 extern void fep256mul(fep256 *c, fep256 *a, fep256 *b);
