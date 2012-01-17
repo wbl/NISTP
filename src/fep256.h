@@ -9,5 +9,6 @@ extern void fep256setone(fep256 *r);
 extern void fep256pack(unsigned char c[32], fep256 *r);
 extern void fep256unpack(fep256 *r, unsigned char c[32]);
 extern void fep256sub(fep256 *c, fep256 *a, fep256 *b);
-extern void fep256inv(fep256 *b, fep256 *a);
+extern void fep256inv(fep256 *c, fep256 *a);
+extern void fep256mul2to24(fep256 *c, fep256 *a);
 extern char fep246iszero(fep256 *a);
