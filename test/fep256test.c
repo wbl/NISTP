@@ -11,18 +11,27 @@ void outputpoly (fep256 *t){
 
 int main(){
   //test fep256.h by creating a script of equations that should hold
+  fep256 a;
   fep256 b;
   fep256 c;
   fep256setzero(&c);
   fep256setone(&b);
   printf("p=2^256-2^224+2^192+2^96-1\n");
   for(int i=1; i<1024; i++){
-    printf("print(Mod(%d, p)==Mod(", i);
+    printf("if(Mod(%d, p)<>Mod(", i);
     fep256add(&c, &c,&b);
     outputpoly(&c);
-    printf(",p))\n");
+    printf(",p), print(%d))\n",i);
   }
-  printf("quit()\n");
+  printf("quit(0)\n");
+  //now to test subtraction:
+  fep256setzero(&c);
+  fep256setone(&b);
+  for(int i=1; i<1024; i++){
+    printf("if(Mod(-%d, p)<>Mod(", i);
+    fep256sub(&a, &c, &b);
+    outputpoly(&a);
+    printf(",p), print(%d))\n", i);
+  }
   exit(0);
 }
-    
