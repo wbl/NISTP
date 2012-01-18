@@ -1,0 +1,11 @@
+Code in src/fep256.c derives from OpenSSL's implementation of P256 written
+by Adam Langly at Google. It is licenced under the terms of the Apache license
+found under APACHE.txt
+
+Code in src/rijndael.c derives from the OpenBSD kernel, and was written by
+people mentioned in it far longer ago.
+
+The entire collection of files (other then src/fep256.c) is licensed under
+the BSD license: fep256.c is a derived work of code in OpenSSL licensed under
+the Apache license, but the rest of the files form a compilation because
+Apache license permits linking.
