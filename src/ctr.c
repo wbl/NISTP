@@ -22,6 +22,10 @@ void aes256ctr(unsigned char *out, unsigned char *in,
   aescrypt(tempblock, inblock, state);
   for(int i=0; i+place<len; i++)/*we might have a spare byte*/
     out[place+i]=in[place+i]^tempblock[i];
+  for(int i=0; i<AES_STATEINTS; i++){
+    state[i]=0; //zeroize secret data
+  }
+  bzero(tempblock, 16); //zeroize secret data
 }
 void incr(unsigned char block[16]){
   /*Can be nonconstant time: attacker knows what we did here.*/

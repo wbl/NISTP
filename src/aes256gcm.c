@@ -19,7 +19,7 @@ void aes256gcmcrypt(unsigned char *c, unsigned char *m,
   unsigned int  space[AES_STATEINTS];
   unsigned char j0[16];
   unsigned char tag[16];
-   bzero(zeros, 16);
+  bzero(zeros, 16);
   memcpy(j0, nonce, 12);
   j0[12]=0;
   j0[13]=0;
@@ -30,12 +30,18 @@ void aes256gcmcrypt(unsigned char *c, unsigned char *m,
     mode potentially being very fast. But first we need H*/
   aeskey(space, key);
   aescrypt(h, zeros, space);
+  for(int i=0; i<AES_STATEINTS; i++){
+    space[i]=0; //zeroize secret data.
+  }
   /*I ought to have aes_ctr take space: no point in redundent scheduling*/
   aes256ctr(c,m,mlen, key, j0);
   /*At this point the first 16 bytes of c are AES(k, j0). The rest are
     the ciphertext.*/
   ghash(tag,c+16,mlen-16,h,c);
   memcpy(c, tag, 16);
+  for(int i=0; i<16; i++){
+    h[i]=0; //zeroizing secret data
+  }
   return;
 }
 
@@ -61,9 +67,17 @@ extern int aes256gcmdecrypt(unsigned char *m, unsigned char *c,
   aescrypt(tagkey, j0, space);
   ghash(tag, c+16, clen-16, h, tagkey);
   if(verify16(tag, c)){
+    bzero(h, 16);
+    for(int i=0; i<AES_STATEINTS; i++){
+      space[i]=0;
+    }
     return -1;
   }
   aes256ctr(m, c, clen, key, j0);
   bzero(m, 16); //cleanup;
+  bzero(h, 16); //zeroizing secret data;
+  for(int i=0; i<AES_STATEINTS; i++){
+    space[i]=0;
+  }
   return 0;
 }

@@ -2,6 +2,7 @@
 #include <strings.h>
 #include "garith.h"
 #include "ghash.h"
+#include "unload64.h"
 typedef struct { /*Right first, fast later*/
   gf2128 h;
   gf2128 x;
@@ -21,6 +22,7 @@ void gupdate(ghash_ctx *ctx, unsigned char *block){
 
 void gfinal(unsigned char *tag, ghash_ctx *ctx){
   gf2128pack(tag, &ctx->x);
+  gf2128zero(&ctx->h); //remove secret data from memory.
 }
 void ghash(unsigned char *tag, unsigned char *m, unsigned long
            long mlen, unsigned char *h, unsigned char *otk){
