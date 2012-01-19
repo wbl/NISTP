@@ -1018,6 +1018,11 @@ void fep256inv(fep256 *c, fep256 *a){
   felem_inv(c->c, a->c);
 }
 
+void fep256scalar(fep256*c, fep256 *a, uint64_t scalar){
+  felem_assign(c->c, a->c);
+  felem_scalar(c->c, scalar);
+}
+
 void fep256setzero(fep256 *c){
   c->c[0]=0;
   c->c[1]=0;
