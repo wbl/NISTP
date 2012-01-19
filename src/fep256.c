@@ -28,7 +28,6 @@
  */
 #include <stdint.h>
 #include "fep256.h"
-typedef __uint128_t uint128_t;
 typedef __int128_t int128_t;
 typedef uint8_t u8;
 typedef uint32_t u32;
@@ -1029,7 +1028,7 @@ void fep256setzero(fep256 *c){
 void fep256setone(fep256 *c){
   smallfelem temp;
   smallfelem_one(temp);
-  felem_expand(c->c, temp);
+  smallfelem_expand(c->c, temp);
 }
 
 int fep256iszero(fep256 *c){ //want to return 1 or zero
@@ -1038,7 +1037,7 @@ int fep256iszero(fep256 *c){ //want to return 1 or zero
   return ((smallfelem_is_zero(temp)+1)==0); //dirty hack: relies on overflow
 }
 
-void fep256cmov(fep256 *c, fep256 *a, usigned int b){
+void fep256cmov(fep256 *c, fep256 *a, int b){
   for(int i=0; i<4; i++){
     c->c[i]=b*(a->c[i])+(1-b)*(c->c[i]);
   }
@@ -1058,7 +1057,7 @@ void fep256unpack(fep256 *c, unsigned char *in){
   smallfelem temp;
   unsigned char little[32];
   for(int i=0; i<32; i++){
-    little[i]=out[31-i];
+    little[i]=in[31-i];
   }
   bin32_to_felem(c->c, little);
 }
