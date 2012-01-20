@@ -1036,7 +1036,7 @@ void fep256setone(fep256 *c){
   smallfelem_expand(c->c, temp);
 }
 
-int fep256iszero(fep256 *c){ //want to return 1 or zero
+unsigned int fep256iszero(fep256 *c){ //want to return 1 if zero
   smallfelem temp;
   felem_contract(temp, c->c);
   return ((smallfelem_is_zero(temp)+1)==0); //dirty hack: relies on overflow
