@@ -58,6 +58,7 @@ void p256add(point *c, point *a, point *b){
   /*Okay, lots of code. Additional multiply is worth strong unification.
     Lack of strong unification:
     Not problem for our application, but signing might be issue*/
+  /*Note that adding the identity to itself doesn't work*/
   fep256setone(&minus3);
   fep256scalar(&minus3, &minus3, 3);
   fep256setzero(&t15);
@@ -99,9 +100,30 @@ void p256add(point *c, point *a, point *b){
 }
 
 void p256dbl(point *c, point *a){
-  /*TODO: use something other then above for speed*/
-  /*I ought to have written that automatic translator*/
-  p256add(c, a, a);
+  /*Despite what EFD says that is not unified*/
+  /*So we use a doubling forumula*/
+  fep256 t0, t1, t2, w, t3, s, ss, sss, r, rr, t4, b, t5, t6, h, t7, t8, t9;
+  fep256sub(&t0, &a->x, &a->z);
+  fep256add(&t1, &a->x, &a->z);
+  fep256mul(&t2, &t0, &t1);
+  fep256scalar(&w, &t2, 3);
+  fep256mul(&t3, &a->y, &a->z);
+  fep256scalar(&s, &t3, 2);
+  fep256sqr(&ss, &s);
+  fep256mul(&sss, &s, &ss);
+  fep256mul(&r, &a->y, &s);
+  fep256sqr(&rr, &r);
+  fep256mul(&t4, &a->x, &r);
+  fep256scalar(&b, &t4, 2);
+  fep256sqr(&t5, &w);
+  fep256scalar(&t6, &b, 2);
+  fep256sub(&h, &t5, &t6);
+  fep256mul(&a->x, &h, &s);
+  fep256sub(&t7, &b, &h);
+  fep256scalar(&t8, &rr, 2);
+  fep256mul(&t9, &w, &t7);
+  fep256sub(&a->y, &t9, &t8);
+  fep256cmov(&a->z, &sss, 1);
 }
 
 void p256cmov(point *c, point *b, unsigned int a){
@@ -113,29 +135,31 @@ void p256cmov(point *c, point *b, unsigned int a){
 void p256scalarmult(point *c, point *a, unsigned char e[32]){
   /*For now double and add*/
   /*except double and add is broken with above formulas*/
+  /*So we require high bit to be set, and use mongomery*/
   unsigned int bit;
   point R0;
   point R1;
-  point ident;
-  point temp;
   p256cmov(&R1, a, 1);
+  p256dbl(&R0, &R1);
   assert(p256oncurve(&R1));
-  fep256setzero(&ident.x);
-  fep256setone(&ident.y);
-  fep256setzero(&ident.z); //make R0, ident identity
-  p256cmov(&R0, &ident, 1);
+  assert(p256oncurve(&R0));
   for(int i=0; i<32; i++){
-    for(int j=7; j>=0; j--){ //iterate from top bit down
+    for(int j=7; j>=0; j--){ //iterate from top down
+      if(j==7 && i==0) continue;
       bit=(e[i]>>j)&0x1;
-      p256cmov(&temp, &ident, 1);
-      p256cmov(&temp, &R1, bit);
-      p256dbl(&R0, &R0);
-      p256add(&R0, &R0, &temp);
-      assert(p256oncurve(&R0));
+      printf("i: %d j: %d\n", i, j);
       assert(p256oncurve(&R1));
+      assert(p256oncurve(&R0));
+      if(bit){
+        p256add(&R1, &R0, &R1);
+        p256dbl(&R0, &R0);
+      }else{
+        p256add(&R0, &R1, &R0);
+        p256dbl(&R1, &R1);
+      }
     }
   }
-  p256cmov(c, &R0,1);
+  p256cmov(c, &R1,1);
 }
 
 void p256pack(unsigned char out[64], point *c){ //changes c, but in ok way
