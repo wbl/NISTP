@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdint.h>
 #include "fep256.h"
+#include "randombytes.h"
 /*This outputs tests for GP. I really should use dc*/
 void hexprint( unsigned char *bytes, unsigned int len){
   for(int i=0; i<len; i++){
@@ -15,17 +17,6 @@ void modpprint(unsigned char *bytes){
   printf("\"),p)");
 }
 
-void randombytes(unsigned char *bytes, unsigned int len){
-  /*Assuming no errors*/
-  int fd;
-  int temp;
-  fd=open("/dev/random", O_RDONLY);
-  while(len){
-    temp=read(fd, bytes, len);
-    fd += temp;
-    len -= temp;
-  }
-}
 
 int main(){
   fep256 a;
@@ -115,6 +106,17 @@ int main(){
   }
   /*Still need to test setone setzero iszero*/
   /*I think they will be okay*/
+  printf("print(\"cmov section\")\n");
+  randombytes(achar, 32);
+  fep256unpack(&a, achar);
+  fep256cmov(&b, &a, 1);
+  fep256pack(bchar, &b);
+  fep256pack(achar, &a);
+  printf("print(");
+  modpprint(achar);
+  printf("==");
+  modpprint(bchar);
+  printf(")\n");
   printf("quit()\n");
   exit(0);
 }

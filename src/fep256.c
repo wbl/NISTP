@@ -1039,12 +1039,12 @@ void fep256setone(fep256 *c){
 unsigned int fep256iszero(fep256 *c){ //want to return 1 if zero
   smallfelem temp;
   felem_contract(temp, c->c);
-  return ((smallfelem_is_zero(temp)+1)==0); //dirty hack: relies on overflow
+  return (smallfelem_is_zero_int(temp));
 }
 
-void fep256cmov(fep256 *c, fep256 *a, int b){
+void fep256cmov(fep256 *c, fep256 *a, unsigned int b){
   for(int i=0; i<4; i++){
-    c->c[i]=b*(a->c[i])+(1-b)*(c->c[i]);
+    c->c[i]=((uint128_t)b)*(a->c[i])+(1-(uint128_t) b)*(c->c[i]);
   }
 }
 
