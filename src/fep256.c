@@ -991,14 +991,22 @@ void fep256reduce(fep256*c){
 }
 
 void fep256add(fep256*c, fep256*a, fep256*b){ 
-  felem_assign(c->c, a->c);
-  felem_sum(c->c, b->c);
+  felem temp1;
+  felem temp2;
+  felem_assign(temp1, a->c);
+  felem_assign(temp2, b->c);
+  felem_sum(temp2, temp1);
+  felem_assign(c->c, temp2);
   fep256reduce(c);
 }
 
 void fep256sub(fep256 *c, fep256 *a, fep256 *b){
-  felem_assign(c->c, a->c);
-  felem_diff(c->c, b->c);
+  felem temp1;
+  felem temp2;
+  felem_assign(temp1, a->c);
+  felem_assign(temp2, b->c);
+  felem_diff(temp1, temp2);
+  felem_assign(c->c, temp1);
   fep256reduce(c);
 }
 
@@ -1009,9 +1017,11 @@ void fep256mul(fep256 *c, fep256 *a, fep256 *b){
 }
 
 void fep256sqr(fep256 *c, fep256 *a){
-  longfelem temp;
-  felem_square(temp, a->c);
-  felem_reduce(c->c, temp);
+  longfelem temp2;
+  felem temp1;
+  felem_assign(temp1, a->c);
+  felem_square(temp2, temp1);
+  felem_reduce(c->c, temp2);
 }
 
 void fep256inv(fep256 *c, fep256 *a){
@@ -1019,8 +1029,10 @@ void fep256inv(fep256 *c, fep256 *a){
 }
 
 void fep256scalar(fep256*c, fep256 *a, uint64_t scalar){
-  felem_assign(c->c, a->c);
-  felem_scalar(c->c, scalar);
+  felem temp;
+  felem_assign(temp, a->c);
+  felem_scalar(temp, scalar);
+  felem_assign(c->c, temp);
 }
 
 void fep256setzero(fep256 *c){

@@ -18,7 +18,7 @@ int main(){
   for(int i=0; i<10; i++){
     randombytes(exp1, 32);
     p256scalarmult_base(&p1, exp1);
-    if(!p256oncurve(&p1)){
+    if(!p256oncurvefinite(&p1)){
       printf("0\n");
     }else {
       printf("1\n");
