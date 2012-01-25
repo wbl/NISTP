@@ -62,9 +62,9 @@ def oncurve(p):
     (x,y)=toaffine(p)
     return (y**2)%prime==(x**3-3*x+paramb)%prime
 
-def pointpow(p, n): #identy doesn't work, must fix
-    if n == 0:
-        return (1,1,0)
+def pointpow(p, n):
+    if n == 1:
+        return p
     elif (n%2)==1:
         return pointadd(p, pointdbl(pointpow(p, n/2)))
     else:
@@ -73,7 +73,6 @@ def pointpow(p, n): #identy doesn't work, must fix
 print oncurve(basepoint)
 print oncurve(pointdbl(basepoint))
 print oncurve(pointadd(basepoint, pointdbl(basepoint)))
-print oncurve(pointadd(identity, basepoint))
-print oncurve(pointadd(basepoint, identity))
-#for i in xrange(1, 100):
-#    print oncurve(pointpow(basepoint, i))
+
+for i in xrange(1, 100):
+    print oncurve(pointpow(basepoint, i))
