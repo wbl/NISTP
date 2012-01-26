@@ -115,3 +115,4 @@ for i in xrange(1, 10):
     bobshare=toaffine(pointpow(fromaffine(alicepk), bobsk))
     aliceshare=toaffine(pointpow(fromaffine(bobpk), alicesk))
     print bobshare==aliceshare
+    print oncurve(fromaffine(bobshare))
