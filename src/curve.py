@@ -29,6 +29,7 @@ def pointadd(p1, p2):
     Y3 = r*(V-X3)-2*S1*J
     Z3 = ((Z1+Z2)**2-Z1Z1-Z2Z2)*H
     return (X3 % prime, Y3 %prime, Z3 % prime)
+
 def pointdbl(p1):
     X1, Y1, Z1 = p1
     delta = Z1**2
@@ -62,6 +63,23 @@ def oncurve(p):
     (x,y)=toaffine(p)
     return (y**2)%prime==(x**3-3*x+paramb)%prime
 
+def bits(x):
+    if x == 1:
+        return [1]
+    if x == 0:
+        return [0]
+    else:
+        temp = bits(x/2)
+        temp.append(x%2)
+        return temp
+
+def paddbits(x):
+    temp = bits(x)
+    padding = 256-len(temp)
+    for i in xrange(0, padding):
+        temp.insert(0, 0)
+    return temp
+
 def pointpow(p, n):
     if n == 1:
         return p
@@ -70,9 +88,18 @@ def pointpow(p, n):
     else:
         return pointdbl(pointpow(p, n/2))
 
-print oncurve(basepoint)
-print oncurve(pointdbl(basepoint))
-print oncurve(pointadd(basepoint, pointdbl(basepoint)))
+def righttoleft(p, n):
+    bitlist = paddbits(n)
+    bitlist.reverse()
+    seen = 0
+    for bit in bitlist:
+        if(bit and  seen):
+            current = pointadd(current, p)
+        if(bit and not seen):
+            current = p
+            seen = 1
+        p = pointdbl(p)
+    return current
 
 for i in xrange(1, 100):
-    print oncurve(pointpow(basepoint, i))
+    print toaffine(righttoleft(basepoint, i))==toaffine(pointpow(basepoint, i))
