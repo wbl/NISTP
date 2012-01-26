@@ -2,7 +2,8 @@
 #Curve.py
 #Use arithmetic we know works to make NISTP work, then translate to C on
 #top of fep256
-
+#also test our algorithms
+import random
 prime = 2**256-2**224+2**192+2**96-1
 paramb = 0x5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b 
 basepx = 0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296
@@ -59,6 +60,10 @@ def toaffine(p):
     x,y,z = p
     return ((x*inv(z)**2)%prime, (y*inv(z)**3)%prime)
 
+def fromaffine(p):
+    x,y=p
+    return (x, y, 1)
+
 def oncurve(p):
     (x,y)=toaffine(p)
     return (y**2)%prime==(x**3-3*x+paramb)%prime
@@ -101,5 +106,12 @@ def righttoleft(p, n):
         p = pointdbl(p)
     return current
 
-for i in xrange(1, 100):
-    print toaffine(righttoleft(basepoint, i))==toaffine(pointpow(basepoint, i))
+for i in xrange(1, 10):
+    #let's test diffie-hellman
+    alicesk=random.randrange(prime)
+    alicepk=toaffine(pointpow(basepoint, alicesk))
+    bobsk=random.randrange(prime)
+    bobpk=toaffine(pointpow(basepoint, bobsk))
+    bobshare=toaffine(pointpow(fromaffine(alicepk), bobsk))
+    aliceshare=toaffine(pointpow(fromaffine(bobpk), alicesk))
+    print bobshare==aliceshare
