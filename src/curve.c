@@ -92,18 +92,16 @@ void p256scalarmult(point *c, point *a, unsigned char e[32]){
   unsigned int seen=0;
   point current;
   point p;
+  point temp;
   p256cmov(&p, a, 1);
   for(int i=31; i>=0; i--){
     for(int j=0; j<8; j++){
-      bit=(e[i]>>j)&0x01; //Right now not constant time: can fix with cmov
-      if(bit && seen){
-        p256add(&current, &current, &p);
-      }
-      if(bit && !seen){
-        p256cmov(&current, &p, 1);
-        seen = 1;
-      }
+      bit=(e[i]>>j)&0x01; //Constant time
+      p256add(&temp, &current, &p);
+      p256cmov(&current, &p, bit*(1-seen));
+      p256cmov(&current, &temp, bit*seen);
       p256dbl(&p, &p);
+      seen = seen + (1-seen)*bit;
     }
   }
   p256cmov(c, &current, 1);

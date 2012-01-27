@@ -12,32 +12,20 @@ basepy = 0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5
 def pointadd(p1, p2):
     X1,Y1,Z1 = p1
     X2, Y2, Z2 = p2
-    print p1, p2
     #note that Z->Z/pZ is a ring homomorphism
     #(that's the mathematics behind not putting % everywhere)
     #EFD add-2007-bl
     Z1Z1 = (Z1**2)%prime
-    print "z1z1", Z1Z1
     Z2Z2 = (Z2**2)%prime
-    print "z2z2", Z2Z2
     U1 = (X1*Z2Z2)%prime
-    print "u1", U1
     U2 = (X2*Z1Z1)%prime
-    print "u2", U2
     S1 = (Y1*Z2*Z2Z2)%prime
-    print "s1", S1
     S2 = (Y2*Z1*Z1Z1)%prime
-    print "s2", S2
     H = (U2-U1)%prime
-    print "h", H
     I = ((2*H)**2)%prime
-    print "i", I
     J = (H*I)%prime
-    print "j", J
     r = (2*(S2-S1))%prime
-    print "r", r
     V = (U1*I)%prime
-    print "v", v
     X3 = (r**2-J-2*V)%prime
     Y3 = (r*(V-X3)-2*S1*J)%prime
     Z3 = (((Z1+Z2)**2-Z1Z1-Z2Z2)*H)%prime
