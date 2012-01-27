@@ -1,7 +1,5 @@
 #include <strings.h>
 #include <stdint.h>
-#include <stdio.h> //debugging
-#include <assert.h>
 #include "fep256.h"
 #include "curve.h"
 /*Using Jacobian coordinates*/
@@ -20,29 +18,7 @@ unsigned char paramb[32]={0x5a, 0xc6, 0x35, 0xd8, 0xaa, 0x3a, 0x93, 0xe7,
                           0xb3, 0xeb, 0xbd, 0x55, 0x76, 0x98, 0x86, 0xbc,
                           0x65, 0x1d, 0x06, 0xb0, 0xcc, 0x53, 0xb0, 0xf6,
                           0x3b, 0xce, 0x3c, 0x3e, 0x27, 0xd2, 0x60,  0x4b};
-void printpt(point *c){
-  unsigned char xchar[32];
-  unsigned char ychar[32];
-  unsigned char zchar[32];
-  fep256pack(xchar, &c->x);
-  fep256pack(ychar, &c->y);
-  fep256pack(zchar, &c->z);
-  printf("x: ");
-  for(int i=0; i<32; i++){
-    printf("%02x", xchar[i]);
-  }
-  printf("\n");
-  printf("y: ");
-  for(int i=0; i<32; i++){
-    printf("%02x", ychar[i]);
-  }
-  printf("\n");
-  printf("z: ");
-  for(int i=0; i<32; i++){
-    printf("%02x", zchar[i]);
-  }
-  printf("\n");
-}
+
 void p256add(point *c, point *a, point *b){
   /*EFD/g1p/auto-code/shortw/jacobian-3/additon/add-2007-bl.op3*/
   fep256 z1z1, z2z2, u1, u2, t0, s1, t1, s2, h, t2, i, j, t3, r, v, t4,
@@ -67,8 +43,8 @@ void p256add(point *c, point *a, point *b){
   fep256sub(&t6, &t4, &j);
   fep256sub(&c->x, &t6, &t5);
   fep256sub(&t7, &v, &c->x);
-  fep256sub(&t8, &s1, &j);
-  fep256scalar(&t9, &t8, 2);
+  fep256mul(&t8, &s1, &j);
+  fep256scalar(&t9, &t8, 2); 
   fep256mul(&t10, &r, &t7);
   fep256sub(&c->y, &t10, &t9);
   fep256add(&t11, &a->z, &b->z);
@@ -111,25 +87,26 @@ void p256cmov(point *c, point *b, unsigned int a){
 }
 
 void p256scalarmult(point *c, point *a, unsigned char e[32]){
-  /*For now double and add*/
-  unsigned int bit;
-  point R0;
-  point R1;
-  point temp;
-  p256cmov(&R1, a, 1);
-  for(int i=0; i<32; i++){
-    for(int j=7; j>=0; j--){ //iterate from top down
-      bit=(e[i]>>j)&0x1;
-      printf("i %d j %d bit %d\n", i, j, bit);
-      printf("R0:");
-      printpt(&R0);
-      printf("R1:");
-      printpt(&R1);
-      p256dbl(&R0, &R0);
-      if(bit){p256add(&R0, &R1, &R0);} //Fix when working
+  /*Right to left addition ala Python*/
+  unsigned int bit=0;
+  unsigned int seen=0;
+  point current;
+  point p;
+  p256cmov(&p, a, 1);
+  for(int i=31; i>=0; i--){
+    for(int j=0; j<8; j++){
+      bit=(e[i]>>j)&0x01; //Right now not constant time: can fix with cmov
+      if(bit && seen){
+        p256add(&current, &current, &p);
+      }
+      if(bit && !seen){
+        p256cmov(&current, &p, 1);
+        seen = 1;
+      }
+      p256dbl(&p, &p);
     }
   }
-  p256cmov(c, &R0,1);
+  p256cmov(c, &current, 1);
 }
 
 void p256pack(unsigned char out[64], point *c){
@@ -150,10 +127,13 @@ void p256unpack(point *c, unsigned char out[64]){
   fep256setone(&c->z);
 }
 
+void p256base(point *a){
+  p256unpack(a, basep);
+}
+
 void p256scalarmult_base(point *c, unsigned char e[32]){
   point a;
   p256unpack(&a, basep);
-  assert(p256oncurvefinite(&a));
   p256scalarmult(c, &a, e);
 }
 

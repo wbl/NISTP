@@ -11,3 +11,4 @@ extern void p256pack(unsigned char p[64], point *a);
 extern void p256unpack(point *c, unsigned char p[64]);
 extern unsigned int  p256oncurvefinite(point *c);
 extern void p256xpack(unsigned char c[32], point *a);
+extern void p256base(point *c);
