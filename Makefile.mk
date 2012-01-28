@@ -1,6 +1,6 @@
 VPATH = ../test:../src
 CC = gcc -ggdb
-CCOPTS = -std=c99 -fPIC
+CCOPTS = -std=c99 -fPIC -O3 -funroll-loops -m64
 IOPTS = -I../src -I../test -I/opt/local/include
 LOPTS = -L/opt/local/lib
 LINK = -ltomcrypt
@@ -17,10 +17,10 @@ garithtest: garithtest.o garith.o
 gpacktest: gpacktest.o garith.o
 fep256test: fep256.o fep256test.o randombytes.o
 curvetest: curvetest.o randombytes.o curve.o fep256.o
-scalarmulttest: scalarmult.o curve.o randombytes.o scalarmulttest.o
+scalarmulttest: scalarmult.o curve.o randombytes.o scalarmulttest.o fep256.o
 libnistp.a: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o load64.o verify.o fep256.o scalarmult.o curve.o
 	ar -r $@ $^
-libnistp.so: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o load64.o verify.o fep256.o sclarmult.o curve.o
+libnistp.so: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o load64.o verify.o fep256.o scalarmult.o curve.o
 	$(CC) -shared $(IOPTS) $(LOPTS) -o $@ $^
 .PHONY : all
 .PHONY : test
