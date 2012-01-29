@@ -13,7 +13,7 @@ void crypto_secretbox_aes256gcm (unsigned char *c, unsigned char *m,
   aes256gcmcrypt(c, m, mlen, n, k);
 }
 
-int crypto_secretbox_open_aes256gcm(unsigned char *m, unsigned char *c,
+int crypto_secretbox_aes256gcm_open(unsigned char *m, unsigned char *c,
                                      unsigned long long clen,
                                      unsigned char *n,
                                      unsigned char *k){

@@ -1,7 +1,8 @@
 #include <strings.h>
 #include "box.h"
 #include "scalarmult.h"
-#include "scretbox.h"
+#include "secretbox.h"
+#include "randombytes.h"
 
 void crypto_box_nistp256aes256gcm_keypair(unsigned char *pk, unsigned char
                                           *sk){
@@ -40,8 +41,9 @@ void crypto_box_nistp256aes256gcm(unsigned char *c, unsigned char *m,
 }
 
 int crypto_box_nistp256aes256gcm_open(unsigned char *m, unsigned char *c,
-                                      unsigned char clen, unsigned char *n,
-                                      unsinged char *pk, unsigned char *sk){
+                                      unsigned long long clen,
+                                      unsigned char *n,
+                                      unsigned char *pk, unsigned char *sk){
   unsigned char k[32];
   crypto_box_nistp256aes256gcm_beforenm(k, pk, sk);
   return crypto_box_nistp256aes256gcm_open_afternm(m, c, clen, n, k);

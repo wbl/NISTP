@@ -9,6 +9,6 @@ extern void crypto_secretbox_aes256gcm(unsigned char *c,
                                        unsigned char *k);
 extern int crypto_secretbox_aes256gcm_open(unsigned char *m, 
                                            unsigned char *c, 
-                                           unsigned char *clen, 
+                                           unsigned long long clen, 
                                            unsigned char *n,
                                            unsigned char *k);

@@ -8,7 +8,7 @@ LINK = -ltomcrypt
 	$(CC) $(CCOPTS) $(IOPTS)  -c $? -o $@
 % : %.o
 	$(CC) $(IOPTS) $(LOPTS) $(LINK) $^ -o $@
-all: test libnistp.a libnistp.so
+all: test libnistp.a
 test: garithtest ctrtest aestest aes256gcmtest gpacktest fep256test curvetest scalarmulttest
 aes256gcmtest: aes256gcmtest.o aes256gcm.o aes256gcmtom.o rijndael.o ctr.o ghash.o unload64.o load64.o garith.o verify.o
 ctrtest: ctrtest.o ctr.o rijndael.o
@@ -18,9 +18,7 @@ gpacktest: gpacktest.o garith.o
 fep256test: fep256.o fep256test.o randombytes.o
 curvetest: curvetest.o randombytes.o curve.o fep256.o
 scalarmulttest: scalarmult.o curve.o randombytes.o scalarmulttest.o fep256.o
-libnistp.a: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o load64.o verify.o fep256.o scalarmult.o curve.o
+libnistp.a: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o load64.o verify.o fep256.o scalarmult.o curve.o box.o
 	ar -r $@ $^
-libnistp.so: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o load64.o verify.o fep256.o scalarmult.o curve.o
-	$(CC) -shared $(IOPTS) $(LOPTS) -o $@ $^
 .PHONY : all
 .PHONY : test
