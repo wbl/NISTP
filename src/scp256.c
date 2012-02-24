@@ -1,18 +1,23 @@
 #include "scp256.h"
+#include <stdio.h>
 /*ripped from nacl, constants changed.*/
 /*style issues: not C99, not GNU indented*/
 /* arithmetic modulo the group of order
    115792089210356248762697446949407573529996955224135760342422259061068512044369
 //we use little endian*/
 /*The modulus, base 256*/
+
 const unsigned char m[32]={81,  37,  99,  252,  194,  202,  185,  243,  132,  158,  23,  167,  173,
                            250,  230,  188,  255,  255,  255,  255,  255,  255,  255,  255,  0,  0, 
                            0,  0,  255,  255,  255, 255};
+
 /*The constant for barrett reduction*/
 /*See HAC 14.42 for details */
-  const unsigned char mu[33]={ 254,  155,  223,  238,  133,  253,  47,  1,  33,  108,  26,  223,  82,  5,  25,  67, 
+const unsigned char mu[33]={ 254,  155,  223,  238,  133,  253,  47,  1,  33,  108,  26,  223,  82,  5,  25,  67, 
                                255,  255,  255,  255,  254,  255,  255,  255,  255,  255,  255,  255,  0,  0,  0,  0, 1};
 /* Reduce coefficients of r before calling reduce_add_sub */
+extern int r1r2err=0;
+
 static void reduce_add_sub(scp256 *r)
 {
   int i, b, pb=0, nb;
@@ -38,6 +43,7 @@ static void barrett_reduce(scp256 *r, const unsigned int x[64])
   unsigned int *q3 = q2 + 33;
   unsigned int r1[33];
   unsigned int r2[33] = {0};
+  unsigned char t[33];
   unsigned int carry;
   int b, pb=0;
 
@@ -48,7 +54,6 @@ static void barrett_reduce(scp256 *r, const unsigned int x[64])
   q2[32] += carry;
   carry = q2[32] >> 8;
   q2[33] += carry;
-
   for(i=0;i<33;i++)r1[i] = x[i];
   for(i=0;i<32;i++)
     for(j=0;j<33;j++)
@@ -60,18 +65,19 @@ static void barrett_reduce(scp256 *r, const unsigned int x[64])
     r2[i+1] += carry;
     r2[i] &= 0xff;
   }
-
-  for(i=0;i<32;i++) 
+  //issue: 3*m overflows a 32 byte word
+  //solution is to change reduce
+  for(i=0;i<33;i++) 
   {
     b = (r1[i]<pb+r2[i]);
-    r->v[i] = r1[i]-pb-r2[i]+b*256;
+    t[i] = r1[i]-pb-r2[i]+b*256;
     pb = b;
   }
-
-  /* XXX: Can it really happen that r<0?, See HAC, Alg 14.42, Step 3 
-   * If so: Handle  it here!
-   */
-
+  /*What goes in here needs to reduce the 33 byte value t to the 32 byte value t(mod m) and put it in r*/
+  for(i=0; i<32; i++){
+    r->v[i]=t[i];
+  }
+  r->v[31]+=256*t[32];
   reduce_add_sub(r);
   reduce_add_sub(r);
 }
@@ -159,7 +165,6 @@ void scp256_mul(scp256 *r, scp256 *x, scp256 *y)
     t[i+1] += carry;
     t[i] &= 0xff;
   }
-
   barrett_reduce(r, t);
 }
 
