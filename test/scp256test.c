@@ -71,4 +71,20 @@ int main(){
     modmprint(cbytes);
     printf(")\n");
   }
+  printf("print(\"subtraction section\")\n");
+  for(int i=0; i<10; i++){ //time to copy
+    randombytes(abytes, 32);
+    randombytes(bbytes, 32);
+    scp256_unpack(&a, abytes);
+    scp256_unpack(&b, bbytes);
+    scp256_sub(&c, &a, &b);
+    scp256_pack(cbytes, &c);
+    printf("print(");
+    modmprint(abytes);
+    printf("-");
+    modmprint(bbytes);
+    printf("==");
+    modmprint(cbytes);
+    printf(")\n");
+  }
 }

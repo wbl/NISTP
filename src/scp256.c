@@ -171,5 +171,18 @@ void scp256_square(scp256 *r, scp256 *x)
   scp256_mul(r, x, x);
 }
 /*That was everything originally in the program. It's enough for
-  a good signature scheme. But we want ECDSA, and ECDSA requires division.
-  Division can be done 
+  a good signature scheme. But we want ECDSA, and ECDSA requires division and subtraction*/
+/*c=a-b*/
+void scp256_sub(scp256 *c, scp256 *a, scp256 *b){
+  scp256 t;
+  unsigned int carry=0;
+  unsigned int brw=0;
+  unsigned int pbrw=0;
+  for(int i=0; i<32; i++){
+    brw=(m[i]<b->v[i]+pbrw);
+    t.v[i]=m[i]-(b->v[i])-pbrw+256*brw;
+    pbrw=brw;
+  }
+  /*Note that b<m, so pb=0*/
+  scp256_add(c, a, &t);
+}
