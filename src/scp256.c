@@ -166,12 +166,13 @@ void scp256_mul(scp256 *r, scp256 *x, scp256 *y)
   barrett_reduce(r, t);
 }
 
-void scp256_square(scp256 *r, scp256 *x)
+void scp256_sqr(scp256 *r, scp256 *x)
 {
   scp256_mul(r, x, x);
 }
 /*That was everything originally in the program. It's enough for
   a good signature scheme. But we want ECDSA, and ECDSA requires division and subtraction*/
+
 /*c=a-b*/
 void scp256_sub(scp256 *c, scp256 *a, scp256 *b){
   scp256 t;
@@ -185,4 +186,35 @@ void scp256_sub(scp256 *c, scp256 *a, scp256 *b){
   }
   /*Note that b<m, so pb=0*/
   scp256_add(c, a, &t);
+}
+void scp256_cmov(scp256 *c, scp256 *b, unsigned int a){
+  for(int i=0; i<32; i++){
+    c->v[i]=c->v[i]*(1-a)+b->v[i]*a;
+  }
+}
+
+void scp256_inv(scp256 *c, scp256 *a){
+  /*idea: raise a to the m-2 power.*/
+  scp256 apow;
+  unsigned char msub2[32];
+  int bit;
+  scp256 temp;
+  for(int i=0; i<32; i++){
+    msub2[i]=m[i];
+  }
+  msub2[0]-=2; //81>2 is used here.
+  for(int i=0; i<32; i++){
+    c->v[i]=0;
+    apow.v[i]=a->v[i];
+  }
+  c->v[0]=1; //set to 1 initially
+  //apow is now a
+  for(int i=0; i<32; i++){//need to go over exponent small bit first
+    for(int j=0; j<8; j++){
+      bit=(msub2[i]>>j)&0x01;
+      scp256_mul(&temp, c, &apow);
+      scp256_cmov(c, &temp, bit);
+      scp256_sqr(&apow, &apow);
+    }
+  }
 }

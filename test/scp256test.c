@@ -87,4 +87,17 @@ int main(){
     modmprint(cbytes);
     printf(")\n");
   }
+  printf("print(\"inversion section\")\n");
+  for(int i=0; i<10; i++){ //time to copy
+    randombytes(abytes, 32);
+    scp256_unpack(&a, abytes);
+    scp256_inv(&c, &a);
+    scp256_pack(cbytes, &c);
+    printf("print(");
+    modmprint(abytes);
+    printf("*");
+    modmprint(cbytes);
+    printf("==Mod(1,m)");
+    printf(")\n");
+  }
 }
