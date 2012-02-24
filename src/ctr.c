@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include "ctr.h"
 #include "aes.h"
-void incr(unsigned char *block);
+static void incr(unsigned char *block);
 void aes256ctr(unsigned char *out, unsigned char *in,
                unsigned long long len, unsigned char *key,
                unsigned char *icb){
@@ -27,7 +27,7 @@ void aes256ctr(unsigned char *out, unsigned char *in,
   }
   bzero(tempblock, 16); //zeroize secret data
 }
-void incr(unsigned char block[16]){
+static void incr(unsigned char block[16]){
   /*Can be nonconstant time: attacker knows what we did here.*/
   block[15]++;
   if(block[15]==0){

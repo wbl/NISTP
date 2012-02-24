@@ -984,7 +984,7 @@ copy_small_conditional(felem out, const smallfelem in, limb mask)
   Clients have to use GCC extensions. This is a problem... but an okay one.
   Speed is lost, clarity gained by these functions.
 */
-void fep256reduce(fep256*c){
+static void fep256reduce(fep256*c){
     smallfelem temp;
     felem_shrink(temp, c->c);
     smallfelem_expand(c->c, temp);

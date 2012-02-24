@@ -142,7 +142,6 @@ void p256xpack(unsigned char c[32], point *a){
 }
 
 unsigned int p256oncurvefinite(point *c){
-  /*Jacobianize me*/
   fep256 a, aa, x, y, t0, t1, t2,t3, t4, t5, t6, t7, b;
   if(fep256iszero(&c->z)) return 0;
   fep256inv(&a, &c->z);

@@ -1,4 +1,2 @@
-*do validation of implementation ala NIST (not that hard, really)
-*refactor GCM
-*increase testing thoroughness to check vs LibTomCrypt.
-*add ECC, possibly adding more direcotries for source
+*ECDSA is comming
+*NACLize source code, submit to DJB

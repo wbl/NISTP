@@ -1,6 +1,6 @@
 #include "scp256.h"
 #include <stdio.h>
-/*ripped from nacl, constants changed.*/
+/*ripped from nacl, some changes made.*/
 /*style issues: not C99, not GNU indented*/
 /* arithmetic modulo the group of order
    115792089210356248762697446949407573529996955224135760342422259061068512044369
@@ -8,16 +8,18 @@
 /*The modulus, base 256*/
 
 const unsigned char m[32]={81,  37,  99,  252,  194,  202,  185,  243,  132,  158,  23,  167,  173,
-                           250,  230,  188,  255,  255,  255,  255,  255,  255,  255,  255,  0,  0, 
+                           250,  230,  188,  255, 
+                           255,  255,  255,  255,  
+                           255,  255,  255,  0,  0, 
                            0,  0,  255,  255,  255, 255};
 
 /*The constant for barrett reduction*/
 /*See HAC 14.42 for details */
-const unsigned char mu[33]={ 254,  155,  223,  238,  133,  253,  47,  1,  33,  108,  26,  223,  82,  5,  25,  67, 
-                               255,  255,  255,  255,  254,  255,  255,  255,  255,  255,  255,  255,  0,  0,  0,  0, 1};
+const unsigned char mu[33]={ 254,  155,  223,  238,  133,  253,
+                             47,  1,  33,  108,  26,  223,  82,  5,  25,  67, 
+                             255,  255,  255,  255,  254,  255, 
+                             255,  255,  255,  255,  255,  255,  0,  0,  0,  0, 1};
 /* Reduce coefficients of r before calling reduce_add_sub */
-extern int r1r2err=0;
-
 static void reduce_add_sub(scp256 *r)
 {
   int i, b, pb=0, nb;
@@ -73,7 +75,7 @@ static void barrett_reduce(scp256 *r, const unsigned int x[64])
     t[i] = r1[i]-pb-r2[i]+b*256;
     pb = b;
   }
-  /*What goes in here needs to reduce the 33 byte value t to the 32 byte value t(mod m) and put it in r*/
+  /*Why this? because t is 33 bytes, not 32.*/
   for(i=0; i<32; i++){
     r->v[i]=t[i];
   }
@@ -90,7 +92,7 @@ static int iszero(const scp256 *x)
 }
 */
 
-void scp256_from32bytes(scp256 *r, const unsigned char x[32])
+static void scp256_from32bytes(scp256 *r, const unsigned char x[32])
 {
   int i;
   unsigned int t[64] = {0};
@@ -98,7 +100,7 @@ void scp256_from32bytes(scp256 *r, const unsigned char x[32])
   barrett_reduce(r, t);
 }
 
-void scp256_from64bytes(scp256 *r, const unsigned char x[64])
+static void scp256_from64bytes(scp256 *r, const unsigned char x[64])
 {
   int i;
   unsigned int t[64] = {0};
@@ -106,18 +108,14 @@ void scp256_from64bytes(scp256 *r, const unsigned char x[64])
   barrett_reduce(r, t);
 }
 
-void rev32(unsigned char *x, unsigned char *t){
+static void rev32(unsigned char *x, unsigned char *t){
   for(int i=0; i<32; i++){
     x[31-i]=t[i];
   }
 }
 
 
-/* XXX: What we actually want for crypto_group is probably just something like
- * void scp256_frombytes(scp256 *r, const unsigned char *x, size_t xlen)
- */
-
-void scp256_to32bytes(unsigned char r[32], const scp256 *x)
+static void scp256_to32bytes(unsigned char r[32], const scp256 *x)
 {
   int i;
   for(i=0;i<32;i++) r[i] = x->v[i];
@@ -172,3 +170,6 @@ void scp256_square(scp256 *r, scp256 *x)
 {
   scp256_mul(r, x, x);
 }
+/*That was everything originally in the program. It's enough for
+  a good signature scheme. But we want ECDSA, and ECDSA requires division.
+  Division can be done 
