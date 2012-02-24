@@ -12,7 +12,7 @@ int main(int argc, char *argv[]){
   unsigned char pt[16];
   unsigned char ct[16];
   memset(key, 0x00, 32);
-  bzero(space, 60);
+  bzero(space, 60*sizeof(int));
   bzero(pt, 16);
   aeskey(space, key);
   aescrypt(ct, pt, space);

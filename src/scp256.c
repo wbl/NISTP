@@ -19,7 +19,9 @@ const unsigned char mu[33]={74, 24, 188, 84, 59, 231, 223, 11, 74, 57,
 
 void reduce_add_sub(scp256 *c){
   /*assumptions: c->v[i]<256 for all i.*/
-  int borrow=0, int prev_borrow=0, int no_reduce=0;
+  int borrow=0;
+  int prev_borrow=0;
+  int no_reduce=0;
   unsigned int t[32];
   /*We calculate a subtraction. Borrow indicates whether we need to borrow
     this time or not. prev_borrow indicates whether we had to brorrow.
@@ -96,7 +98,6 @@ void barrett_reduce(scp256 *r, unsigned int x[64]){
     r2[i+1]+=carry;
     r2[i]&=0xff;
   }
-  r2[32]&=0xff; //we've reduced the product mod 256^33 now.
   //time to subtract, same as above
   for(int i=0; i<32; i++){
     b=(r1[i]<pb+r2[i]);
@@ -114,9 +115,9 @@ void barrett_reduce(scp256 *r, unsigned int x[64]){
 void scp256_unpack(scp256 *r, unsigned char x[32]){
   unsigned int t[64]={0};
   for(int i=0; i<32; i++){
-    t[31-i]=x[i];
+    r->v[31-i]=x[i];
   }
-  barrett_reduce(r, t);
+  reduce_add_sub(r);
 }
 
 void scp256_pack(unsigned char x[32], scp256 *r){
@@ -149,7 +150,7 @@ void scp256_sub(scp256 *c, scp256 *a, scp256 *b){
     c->v[i] &=0xff;
   }
   //carry=0 as top part is less then 25.
+  reduce_add_sub(c);
 }
 
-    
 
