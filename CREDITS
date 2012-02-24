@@ -1,7 +1,8 @@
 Adam Langly wrote most of fep256.c. It lives in OpenSSL as p256.c.
-DJB, Bo-Yin Yang, and Niels Duif seem to have collaberated on parts of sc25519.c, which
-lives as scp256.c in here.
-rijndael.c and aes.c are from the OpenBSD kernel, and are ultimately descended from the AES
-submission.
+DJB, Bo-Yin Yang, and Niels Duif seem to have collaberated on
+parts of sc25519.c, which lives as scp256.c in here.
+rijndael.c and aes.c are from the OpenBSD kernel,
+and are ultimately descended from the AES submission.
+blocks.c and hash.c are by DJB.
 
 All of the other files/modifications/bugs are by Watson Ladd
