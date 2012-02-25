@@ -4,11 +4,10 @@ D. J. Bernstein
 Public domain.
 */
 
-#include "crypto_hashblocks_sha512.h"
-#include "crypto_hash.h"
+#include "crypto_hashblocks.h"
+#include "hash.h"
 
-#define blocks crypto_hashblocks_sha512
-
+#define blocks crypto_hashblocks
 static const unsigned char iv[64] = {
   0x6a,0x09,0xe6,0x67,0xf3,0xbc,0xc9,0x08,
   0xbb,0x67,0xae,0x85,0x84,0xca,0xa7,0x3b,
