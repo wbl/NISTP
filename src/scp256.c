@@ -84,13 +84,6 @@ static void barrett_reduce(scp256 *r, const unsigned int x[64])
   reduce_add_sub(r);
 }
 
-/*
-static int iszero(const scp256 *x)
-{
-  // Implement
-  return 0;
-}
-*/
 
 static void scp256_from32bytes(scp256 *r, const unsigned char x[32])
 {
@@ -217,4 +210,12 @@ void scp256_inv(scp256 *c, scp256 *a){
       scp256_sqr(&apow, &apow);
     }
   }
+}
+
+int scp256_iszero(scp256 *c){
+  unsigned int r=0;
+  for(int i=0; i<32; i++){
+    r|=c->v[i];
+  }
+  return (r==0);
 }
