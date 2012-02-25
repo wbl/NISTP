@@ -24,7 +24,7 @@ static void gfinal(unsigned char *tag, ghash_ctx *ctx){
   gf2128pack(tag, &ctx->x);
   gf2128zero(&ctx->h); //remove secret data from memory.
 }
-void ghash(unsigned char *tag, unsigned char *m, unsigned long
+void crypto_ghash(unsigned char *tag, unsigned char *m, unsigned long
            long mlen, unsigned char *h, unsigned char *otk){
   ghash_ctx ctx;
   unsigned long long place;

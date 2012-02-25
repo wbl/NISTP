@@ -37,7 +37,7 @@ void aes256gcmcrypt(unsigned char *c, unsigned char *m,
   aes256ctr(c,m,mlen, key, j0);
   /*At this point the first 16 bytes of c are AES(k, j0). The rest are
     the ciphertext.*/
-  ghash(tag,c+16,mlen-16,h,c);
+  crypto_ghash(tag,c+16,mlen-16,h,c);
   memcpy(c, tag, 16);
   for(int i=0; i<16; i++){
     h[i]=0; //zeroizing secret data
@@ -65,7 +65,7 @@ extern int aes256gcmdecrypt(unsigned char *m, unsigned char *c,
   aeskey(space, key);
   aescrypt(h, zeros, space);
   aescrypt(tagkey, j0, space);
-  ghash(tag, c+16, clen-16, h, tagkey);
+  crypto_ghash(tag, c+16, clen-16, h, tagkey);
   if(verify16(tag, c)){
     bzero(h, 16);
     for(int i=0; i<AES_STATEINTS; i++){
