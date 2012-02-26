@@ -3,7 +3,9 @@
 #Use arithmetic we know works to make NISTP work, then translate to C on
 #top of fep256
 #also test our algorithms
+#include ecdsa
 import random
+import hashlib
 prime = 2**256-2**224+2**192+2**96-1
 paramb = 0x5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b 
 basepx = 0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296
@@ -29,7 +31,6 @@ def pointadd(p1, p2):
     X3 = (r**2-J-2*V)%prime
     Y3 = (r*(V-X3)-2*S1*J)%prime
     Z3 = (((Z1+Z2)**2-Z1Z1-Z2Z2)*H)%prime
-    print (X3, Y3, Z3)
     return (X3 % prime, Y3 %prime, Z3 % prime)
 
 def pointdbl(p1):
@@ -106,5 +107,40 @@ def righttoleft(p, n):
             seen = 1
         p = pointdbl(p)
     return current
+m = 115792089210356248762697446949407573529996955224135760342422259061068512044369
+rand=random.SystemRandom()
 
-print pointpow(basepoint, 5);
+def base256(s):
+    return reduce(lambda x, y: x*256+y,map(ord, s),0)
+
+def invm(x):
+    return pow(x, m-2, m)
+
+def sign(message, d):
+    k=rand.randint(0, m-1)
+    e=base256(hashlib.sha512(message).digest())
+    r,_ = toaffine(pointpow(basepoint, k))
+    r=r%m
+    s=invm(k)*(e+r*d)%m
+    return (r,s,message)
+
+def verify(r,s, message, px, py):
+    Q=(px, py, 1)
+    e=base256(hashlib.sha512(message).digest())
+    w=invm(s)
+    u1=(e*w)%m
+    u2=(r*w)%m
+    v,_=toaffine(pointadd(pointpow(basepoint, u1), pointpow(Q, u2)))
+    v = v%m
+    return v==r
+
+def test():
+    privkey=rand.randint(0,m-1)
+    (x,y)=toaffine(pointpow(basepoint, privkey))
+    (r,s,message)=sign("Hello World!", privkey)
+    if verify(r,s,message, x,y):
+        print "Ok"
+    else:
+        print "Not Ok"
+
+test()
