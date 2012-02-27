@@ -77,6 +77,7 @@ int crypto_sign_open_ecdsa256sha512(unsigned char *m, unsigned long long *mlen,
   scp256 t;
   if(smlen<64) return -1;
   p256unpack(&Q, pk);
+  if(!p256oncurvefinite(&Q)) return -1; //check key validity
   //just some message manipulation
   memcpy(m, sm+64, smlen-64);
   *mlen=smlen-64;

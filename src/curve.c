@@ -1,7 +1,8 @@
-#include <strings.h>
+#include <string.h>
 #include <stdint.h>
 #include "fep256.h"
 #include "curve.h"
+
 /*Using Jacobian coordinates*/
 unsigned char basep[64]={0x6b,  0x17,  0xd1,  0xf2,  0xe1,  0x2c,  0x42,
                          0x47,  0xf8,  0xbc,  0xe6,  0xe5,  0x63,  0xa4, 
