@@ -94,7 +94,7 @@ void p256scalarmult(point *c, point *a, unsigned char e[32]){
   point p;
   point temp;
   p256cmov(&p, a, 1);
-  for(int i=31; i>=0; i--){
+  for(int i=31; i>=0; i--){ //make it big endian
     for(int j=0; j<8; j++){
       bit=(e[i]>>j)&0x01; //Constant time
       p256add(&temp, &current, &p);

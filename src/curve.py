@@ -113,34 +113,34 @@ rand=random.SystemRandom()
 def base256(s):
     return reduce(lambda x, y: x*256+y,map(ord, s),0)
 
+def tonumber(s):
+    return base256(s[0:32])
+
 def invm(x):
     return pow(x, m-2, m)
 
-def sign(message, d):
-    k=rand.randint(0, m-1)
-    e=base256(hashlib.sha512(message).digest())
+def sign(e, d,k):
     r,_ = toaffine(pointpow(basepoint, k))
     r=r%m
     s=invm(k)*(e+r*d)%m
-    return (r,s,message)
+    return (r,s,e)
 
-def verify(r,s, message, px, py):
+def verify(r,s, e, px, py):
     Q=(px, py, 1)
-    e=base256(hashlib.sha512(message).digest())
     w=invm(s)
     u1=(e*w)%m
     u2=(r*w)%m
     v,_=toaffine(pointadd(pointpow(basepoint, u1), pointpow(Q, u2)))
     v = v%m
+    print u1, u2, v
     return v==r
 
-def test():
-    privkey=rand.randint(0,m-1)
+def test(z, privkey, k):
     (x,y)=toaffine(pointpow(basepoint, privkey))
-    (r,s,message)=sign("Hello World!", privkey)
-    if verify(r,s,message, x,y):
+    (r,s,e)=sign(z, privkey,k)
+    if verify(r,s,e, x,y):
         print "Ok"
     else:
         print "Not Ok"
 
-test()
+
