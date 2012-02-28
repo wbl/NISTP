@@ -56,6 +56,7 @@ extern int aes256gcmdecrypt(unsigned char *m, unsigned char *c,
   unsigned char j0[16];
   unsigned char tagkey[16];
   unsigned char tag[16];
+  if(clen<16) return -1;
   bzero(zeros, 16);
   memcpy(j0, nonce, 12);
   j0[12]=0;
