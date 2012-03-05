@@ -220,10 +220,10 @@ void scp256_inv(scp256 *c, scp256 *a){
   c->v[0]=1; //set to 1 initially
   //apow is now a
   for(int i=0; i<32; i++){//need to go over exponent small bit first
-    for(int j=0; j<8; j++){
+    for(int j=0; j<8; j++){ //exponent is public: time can vary!
       bit=(msub2[i]>>j)&0x01;
-      scp256_mul(&temp, c, &apow);
-      scp256_cmov(c, &temp, bit);
+      if(bit)
+        scp256_mul(c, c, &apow);
       scp256_sqr(&apow, &apow);
     }
   }

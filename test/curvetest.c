@@ -9,6 +9,9 @@
 int main(){
   unsigned char exp[32];
   point temp;
+  unsigned char otherexp[32];
+  point b;
+  point basepoint;
   printf("start\n");
   printf("exp section\n");
   for(int i=0; i<10; i++){
@@ -21,4 +24,5 @@ int main(){
       printf("0\n");
     }
   }
+  exit(0);
 }
