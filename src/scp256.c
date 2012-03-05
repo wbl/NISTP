@@ -163,9 +163,22 @@ void scp256_mul(scp256 *r, scp256 *x, scp256 *y)
   barrett_reduce(r, t);
 }
 
-void scp256_sqr(scp256 *r, scp256 *x)
-{
-  scp256_mul(r, x, x);
+void scp256_sqr(scp256 *r, scp256 *x){
+  unsigned int carry;
+  unsigned int t[64];
+  for(int i=0; i<64; i++) t[i]=0;
+  for(int i=0; i<32; i++){
+    t[2*i]+=x->v[i]*x->v[i];
+    for(int j=i+1; j<32; j++){
+      t[i+j]+=2*x->v[i]*x->v[j];
+    }
+  }
+  for(int i=0;i<63;i++){
+    carry = t[i] >> 8;
+    t[i+1] += carry;
+    t[i] &= 0xff;
+  }
+  barrett_reduce(r,t);
 }
 /*That was everything originally in the program. It's enough for
   a good signature scheme. But we want ECDSA, and ECDSA requires division and subtraction*/
