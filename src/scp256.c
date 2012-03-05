@@ -35,9 +35,7 @@ static void reduce_add_sub(scp256 *r)
   for(i=0;i<32;i++) 
     r->v[i] = r->v[i]*b + t[i]*nb;
 }
-static inline int max(int a, int b){
-  return (a>b)?a:b;
-}
+
 /* Reduce coefficients of x before calling barrett_reduce */
 static void barrett_reduce(scp256 *r, const unsigned int x[64])
 {
@@ -52,16 +50,16 @@ static void barrett_reduce(scp256 *r, const unsigned int x[64])
   int b, pb=0;
 
   for(i=0;i<33;i++)
-    for(j=max(0, 31-i);j<33;j++)
-       q2[i+j] += mu[i]*x[j+31];
+    for(j=0;j<33;j++)
+      if(i+j >= 31) q2[i+j] += mu[i]*x[j+31];
   carry = q2[31] >> 8;
   q2[32] += carry;
   carry = q2[32] >> 8;
   q2[33] += carry;
   for(i=0;i<33;i++)r1[i] = x[i];
   for(i=0;i<32;i++)
-    for(j=0;j<33-i;j++)
-      r2[i+j] += m[i]*q3[j];
+    for(j=0;j<33;j++)
+      if(i+j < 33) r2[i+j] += m[i]*q3[j];
 
   for(i=0;i<32;i++)
   {
