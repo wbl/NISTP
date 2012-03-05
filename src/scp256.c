@@ -7,7 +7,8 @@
 //we use little endian*/
 /*The modulus, base 256*/
 
-const unsigned char m[32]={81,  37,  99,  252,  194,  202,  185,  243,  132,  158,  23,  167,  173,
+const unsigned char m[32]={81,  37,  99,  252,  194,  202,  185,
+                           243,  132,  158,  23,  167,  173,
                            250,  230,  188,  255, 
                            255,  255,  255,  255,  
                            255,  255,  255,  0,  0, 
@@ -18,7 +19,8 @@ const unsigned char m[32]={81,  37,  99,  252,  194,  202,  185,  243,  132,  15
 const unsigned char mu[33]={ 254,  155,  223,  238,  133,  253,
                              47,  1,  33,  108,  26,  223,  82,  5,  25,  67, 
                              255,  255,  255,  255,  254,  255, 
-                             255,  255,  255,  255,  255,  255,  0,  0,  0,  0, 1};
+                             255,  255,  255,  255,  255,  255,
+                             0,  0,  0,  0, 1};
 /* Reduce coefficients of r before calling reduce_add_sub */
 static void reduce_add_sub(scp256 *r)
 {
@@ -35,7 +37,9 @@ static void reduce_add_sub(scp256 *r)
   for(i=0;i<32;i++) 
     r->v[i] = r->v[i]*b + t[i]*nb;
 }
-
+static int min(int a, int b){
+  return (a<b)?a:b;
+}
 /* Reduce coefficients of x before calling barrett_reduce */
 static void barrett_reduce(scp256 *r, const unsigned int x[64])
 {
@@ -58,8 +62,8 @@ static void barrett_reduce(scp256 *r, const unsigned int x[64])
   q2[33] += carry;
   for(i=0;i<33;i++)r1[i] = x[i];
   for(i=0;i<32;i++)
-    for(j=0;j<33;j++)
-      if(i+j < 33) r2[i+j] += m[i]*q3[j];
+    for(j=0;j<33-i;j++)
+      r2[i+j] += m[i]*q3[j];
 
   for(i=0;i<32;i++)
   {
@@ -145,8 +149,8 @@ void scp256_mul(scp256 *r, scp256 *x, scp256 *y)
   unsigned int t[64];
   for(i=0;i<64;i++)t[i] = 0;
 
-  for(i=0;i<32;i++)
-    for(j=0;j<32;j++)
+  for(int i=0; i<32; i++)
+    for(int j=0; j<32; j++)
       t[i+j] += x->v[i] * y->v[j];
 
   /* Reduce coefficients */
