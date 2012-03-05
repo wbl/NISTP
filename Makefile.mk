@@ -9,7 +9,7 @@ LINK = -ltomcrypt
 % : %.o
 	$(CC) $(CCOPTS) $(IOPTS) $(LOPTS) $(LINK) $^ -o $@
 all: test libnistp.a
-test: garithtest ctrtest aestest aes256gcmtest gpacktest fep256test curvetest scalarmulttest boxtest scp256test hashtest ecdsatest curveknown
+test: garithtest ctrtest aestest aes256gcmtest gpacktest fep256test curvetest scalarmulttest boxtest scp256test hashtest ecdsatest curveknown ecdsaspeed scalarmultspeed
 aes256gcmtest: aes256gcmtest.o aes256gcm.o aes256gcmtom.o rijndael.o ctr.o ghash.o unload64.o load64.o garith.o verify.o
 ctrtest: ctrtest.o ctr.o rijndael.o
 aestest: aestest.o rijndael.o
@@ -22,7 +22,9 @@ boxtest: boxtest.o box.o scalarmult.o curve.o secretbox.o ghash.o garith.o aes25
 scp256test: scp256.o scp256test.o randombytes.o
 hashtest: hash.o blocks.o hashtest.o
 ecdsatest: ecdsa.o randombytes.o scp256.o curve.o fep256.o ecdsatest.o hash.o verify.o blocks.o
+ecdsaspeed: ecdsaspeed.o scp256.o curve.o fep256.o hash.o verify.o blocks.o ecdsa.o randombytes.o
 curveknown: curveknown.o fep256.o curve.o scp256.o
+scalarmultspeed: curve.o fep256.o randombytes.o scalarmultspeed.o scalarmult.o
 libnistp.a: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o load64.o verify.o fep256.o scalarmult.o curve.o box.o scp256.o ecdsa.o
 	ar -r $@ $^
 .PHONY : all
