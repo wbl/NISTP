@@ -87,21 +87,23 @@ void p256cmov(point *c, point *b, unsigned int a){
   fep256cmov(&c->z, &b->z, a);
 }
 
+void p256identity(point *c){
+  fep256setone(&c->x);
+  fep256setone(&c->y);
+  fep256setzero(&c->z);
+}
 void p256scalarmult(point *c, point *a, unsigned char e[32]){
-  /*Right to left addition ala Python*/
-  unsigned int bit=0;
   unsigned int seen=0;
+  unsigned int bit=0;
   point current;
-  point p;
   point temp;
-  p256cmov(&p, a, 1);
-  for(int i=31; i>=0; i--){ //make it big endian
-    for(int j=0; j<8; j++){
+  for(int i=0; i<32; i++){ //make it big endian, and high bit first
+    for(int j=7; j>=0; j--){
       bit=(e[i]>>j)&0x01; //Constant time
-      p256add(&temp, &current, &p);
-      p256cmov(&current, &p, bit*(1-seen));
+      p256dbl(&current, &current);
+      p256add(&temp, &current, a);
+      p256cmov(&current, a, bit*(1-seen));
       p256cmov(&current, &temp, bit*seen);
-      p256dbl(&p, &p);
       seen = seen + (1-seen)*bit;
     }
   }

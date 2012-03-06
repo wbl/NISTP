@@ -107,6 +107,20 @@ def righttoleft(p, n):
             seen = 1
         p = pointdbl(p)
     return current
+
+def lefttoright(p,n):
+    bitlist=paddbits(n)
+    current=identity
+    seen=0
+    for bit in bitlist:
+        current=pointdbl(current)
+        if(bit and seen):
+            current=pointadd(current, p)
+        if(bit and not seen):
+            current=p
+            seen=1
+    return current
+
 m = 115792089210356248762697446949407573529996955224135760342422259061068512044369
 rand=random.SystemRandom()
 
@@ -143,4 +157,13 @@ def test(z, privkey, k):
     else:
         print "Not Ok"
 
+def testexp(p,n):
+    (x,y)=toaffine(lefttoright(p,n))
+    (xp, yp)=toaffine(pointpow(p, n))
+    if(x==xp and yp==y):
+        print "OK"
+    else:
+        print "Not Ok"
+
+testexp(basepoint, 34000)
 

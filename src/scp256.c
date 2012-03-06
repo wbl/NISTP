@@ -208,27 +208,28 @@ void scp256_cmov(scp256 *c, scp256 *b, unsigned int a){
 
 void scp256_inv(scp256 *c, scp256 *a){
   /*idea: raise a to the m-2 power.*/
-  scp256 apow;
   unsigned char msub2[32];
-  int bit;
-  scp256 temp;
+  int index;
+  scp256 apows[4]; //use a two bit window: base 4
   for(int i=0; i<32; i++){
     msub2[i]=m[i];
   }
   msub2[0]-=2; //81>2 is used here.
   for(int i=0; i<32; i++){
     c->v[i]=0;
-    apow.v[i]=a->v[i];
   }
   c->v[0]=1; //set to 1 initially
-  //apow is now a
-  for(int i=0; i<32; i++){//need to go over exponent small bit first
-    for(int j=0; j<8; j++){ //exponent is public: time can vary!
-      bit=(msub2[i]>>j)&0x01;
-      if(bit)
-        scp256_mul(c, c, &apow);
-      scp256_sqr(&apow, &apow);
-    }
+  scp256_cmov(&apows[0], c, 1);
+  for(int i=1; i<4; i++){
+    scp256_mul(&apows[i], &apows[i-1], a);
+  }
+  for(int i=31; i>=0; i--){//big endian right now
+    for(int j=6; j>=0; j-=2){ //exponent is public: time can vary!
+      index=(msub2[i]>>j)&0x03;
+      scp256_sqr(c, c);
+      scp256_sqr(c, c);
+      scp256_mul(c, c, &apows[index]);
+      }
   }
 }
 
