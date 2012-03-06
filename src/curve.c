@@ -95,14 +95,30 @@ void p256identity(point *c){
 void p256scalarmult(point *c, point *a, unsigned char e[32]){
   unsigned int seen=0;
   unsigned int bit=0;
+  unsigned int index=0;
   point current;
   point temp;
+  point p;
+  point table[16];//let's do 2 bit first, then increase
+  p256cmov(&table[1], a, 1);
+  p256dbl(&table[2], a);
+  for(int i=3; i<16; i++){
+    p256add(&table[i], &table[i-1], a);
+  }
   for(int i=0; i<32; i++){ //make it big endian, and high bit first
-    for(int j=7; j>=0; j--){
-      bit=(e[i]>>j)&0x01; //Constant time
+    for(int j=4; j>=0; j-=4){
+      index=(e[i]>>j)&0x0f; //Constant time
+      bit=(index!=0);
       p256dbl(&current, &current);
-      p256add(&temp, &current, a);
-      p256cmov(&current, a, bit*(1-seen));
+      p256dbl(&current, &current);
+      p256dbl(&current, &current);
+      p256dbl(&current, &current);
+      //load table[index] in constant time
+      for(int k=0; k<16; k++){
+        p256cmov(&p, &table[k], (k==index));
+      }
+      p256add(&temp, &current, &p);
+      p256cmov(&current, &p, bit*(1-seen));
       p256cmov(&current, &temp, bit*seen);
       seen = seen + (1-seen)*bit;
     }
