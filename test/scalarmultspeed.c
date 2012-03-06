@@ -17,5 +17,5 @@ int main(){
     crypto_scalarmult_nistp256(bobsec, bobsk, alicepk);
     crypto_scalarmult_nistp256(alicesec, alicesk, bobpk);
   }
-  printf("20000 DH operations\n");
+  printf("20000 exponentiations\n");
 }
