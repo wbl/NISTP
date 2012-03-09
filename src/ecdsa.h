@@ -1,13 +1,13 @@
 extern void crypto_sign_ecdsa256sha512(unsigned char *sm,
                                        unsigned long long *smlen,
-                                       unsigned char *m,
+                                       const unsigned char *m,
                                        unsigned long long mlen,
-                                       unsigned char *sk);
+                                       const unsigned char *sk);
 extern int crypto_sign_open_ecdsa256sha512(unsigned char *m,
                                            unsigned long long *mlen,
-                                           unsigned char *sm,
+                                           const unsigned char *sm,
                                            unsigned long long smlen,
-                                           unsigned char *pk);
+                                           const unsigned char *pk);
 extern void crypto_sign_keypair_ecdsa256sha512(unsigned char *pk,
                                                unsigned char *sk);
 

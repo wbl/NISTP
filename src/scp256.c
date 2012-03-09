@@ -108,7 +108,7 @@ static void scp256_from64bytes(scp256 *r, const unsigned char x[64])
   barrett_reduce(r, t);
 }
 
-static void rev32(unsigned char *x, unsigned char *t){
+static void rev32(unsigned char *x, const unsigned char *t){
   for(int i=0; i<32; i++){
     x[31-i]=t[i];
   }
@@ -127,7 +127,7 @@ void scp256_pack(unsigned char x[32], scp256 *r){
   rev32(x, t);
 }
 
-void scp256_unpack(scp256 *r, unsigned char x[32]){
+void scp256_unpack(scp256 *r, const unsigned char x[32]){
   unsigned char t[32];
   rev32(t, x);
   scp256_from32bytes(r, t);

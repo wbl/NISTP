@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "fep256.h"
 #include "curve.h"
 #include "scp256.h"

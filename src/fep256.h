@@ -17,5 +17,5 @@ extern unsigned int fep256iszero(fep256 *a);
 extern void fep256cmov (fep256 *r, fep256 *x, unsigned int b);
 
 extern void fep256pack(unsigned char c[32], fep256 *r);
-extern void fep256unpack(fep256 *r, unsigned char c[32]);
+extern void fep256unpack(fep256 *r, const unsigned char c[32]);
 

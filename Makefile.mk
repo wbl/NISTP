@@ -32,3 +32,6 @@ libnistp.a: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o
 .PHONY : all
 .PHONY : test
 .PHONY : speed
+.PHONY : clean
+clean:
+	rm *.o *.a garithtest ctrtest aestest aes256gcmtest gpacktest fep256test curvetest scalarmulttest boxtest scp256test hashtest ecdsatest curveknown ecdsaspeed ecdsaverifyspeed scalarmultspeed

@@ -1,5 +1,6 @@
 #include "randombytes.h"
 #include <fcntl.h>
+#include <unistd.h>
 void randombytes(unsigned char *bytes, unsigned int len){
   /*Assuming no errors*/
   int fd;

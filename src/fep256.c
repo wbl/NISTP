@@ -1070,7 +1070,7 @@ void fep256pack(unsigned char *out, fep256 *a){
   }
 }
 
-void fep256unpack(fep256 *c, unsigned char *in){
+void fep256unpack(fep256 *c, const unsigned char *in){
   smallfelem temp;
   unsigned char little[32];
   for(int i=0; i<32; i++){

@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <strings.h>
 #include "hash.h"
 #include "fep256.h"
 #include "scp256.h"
@@ -16,8 +17,8 @@ void crypto_sign_keypair_ecdsa256sha512(unsigned char *pk,
 /*The format of signed messages is as follows: the first 64 bytes are a
   signature, the first 32 being r, the second 32 s. The message follows.*/
 void crypto_sign_ecdsa256sha512(unsigned char *sm, unsigned long long *smlen,
-                           unsigned char *m, unsigned long long mlen,
-                           unsigned char *sk){
+                           const unsigned char *m, unsigned long long mlen,
+                           const unsigned char *sk){
   unsigned char mhash[64];
   unsigned char kchar[64];
   unsigned char rchar[64];
@@ -55,9 +56,9 @@ void crypto_sign_ecdsa256sha512(unsigned char *sm, unsigned long long *smlen,
 }
 
 int crypto_sign_open_ecdsa256sha512(unsigned char *m, unsigned long long *mlen,
-                                    unsigned char *sm,
+                                    const unsigned char *sm,
                                     unsigned long long smlen,
-                                    unsigned char *pk){
+                                    const unsigned char *pk){
   //all data here is public: don't worry about revelations
   unsigned char mhash[64];
   point Q;

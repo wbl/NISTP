@@ -2,6 +2,7 @@
 #include "randombytes.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
 int main(){
   unsigned char alicesk[32];
   unsigned char alicepk[64];

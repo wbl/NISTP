@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "fep256.h"
 #include "randombytes.h"
 /*This outputs tests for GP. I really should use dc*/

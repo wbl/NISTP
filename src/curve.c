@@ -92,7 +92,7 @@ void p256identity(point *c){
   fep256setone(&c->y);
   fep256setzero(&c->z);
 }
-void p256scalarmult(point *c, point *a, unsigned char e[32]){
+void p256scalarmult(point *c, point *a, const unsigned char e[32]){
   unsigned int seen=0;
   unsigned int bit=0;
   unsigned int index=0;
@@ -138,9 +138,9 @@ void p256pack(unsigned char out[64], point *c){
   fep256pack(out+32, &y3);
 }
 
-void p256unpack(point *c, unsigned char out[64]){
-  fep256unpack(&c->x, out);
-  fep256unpack(&c->y, out+32);
+void p256unpack(point *c, const unsigned char in[64]){
+  fep256unpack(&c->x, in);
+  fep256unpack(&c->y, in+32);
   fep256setone(&c->z);
 }
 
@@ -148,7 +148,7 @@ void p256base(point *a){
   p256unpack(a, basep);
 }
 
-void p256scalarmult_base(point *c, unsigned char e[32]){
+void p256scalarmult_base(point *c, const unsigned char e[32]){
   point a;
   p256unpack(&a, basep);
   p256scalarmult(c, &a, e);
