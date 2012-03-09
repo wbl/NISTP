@@ -4,13 +4,15 @@ CCOPTS = -std=c99 -fPIC -O3 -funroll-loops -m64
 IOPTS = -I../src -I../test -I/opt/local/include
 LOPTS = -L/opt/local/lib
 LINK = -ltomcrypt
+TESTS=garithtest ctrtest aestest aes256gcmtest gpacktest fep256test curvetest scalarmulttest boxtest scp256test hashtest ecdsatest curveknown schnorrtest
+SPEED=ecdsaspeed ecdsaverifyspeed scalarmultspeed schnorrsignspeed schnorrverifyspeed
 %.o: %.c
 	$(CC) $(CCOPTS) $(IOPTS)  -c $^ -o $@
 % : %.o
 	$(CC) $(CCOPTS) $(IOPTS) $(LOPTS) $(LINK) $^ -o $@
 all: test libnistp.a speed
-test: garithtest ctrtest aestest aes256gcmtest gpacktest fep256test curvetest scalarmulttest boxtest scp256test hashtest ecdsatest curveknown
-speed:ecdsaspeed scalarmultspeed ecdsaverifyspeed
+test: $(TESTS)
+speed:$(SPEED)
 aes256gcmtest: aes256gcmtest.o aes256gcm.o aes256gcmtom.o rijndael.o ctr.o ghash.o unload64.o load64.o garith.o verify.o
 ctrtest: ctrtest.o ctr.o rijndael.o
 aestest: aestest.o rijndael.o
@@ -27,6 +29,9 @@ ecdsaspeed: ecdsaspeed.o scp256.o curve.o fep256.o hash.o verify.o blocks.o ecds
 ecdsaverifyspeed: ecdsaverifyspeed.o scp256.o curve.o fep256.o hash.o verify.o blocks.o ecdsa.o randombytes.o
 curveknown: curveknown.o fep256.o curve.o scp256.o
 scalarmultspeed: curve.o fep256.o randombytes.o scalarmultspeed.o scalarmult.o
+schnorrtest: curve.o fep256.o scp256.o verify.o blocks.o hash.o schnorrtest.o schnorr.o randombytes.o
+schnorrsignspeed: schnorrsignspeed.o curve.o fep256.o scp256.o verify.o blocks.o hash.o schnorr.o randombytes.o
+schnorrverifyspeed:schnorrverifyspeed.o curve.o fep256.o scp256.o verify.o blocks.o hash.o schnorr.o randombytes.o
 libnistp.a: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o load64.o verify.o fep256.o scalarmult.o curve.o box.o scp256.o ecdsa.o
 	ar -r $@ $^
 .PHONY : all
@@ -34,4 +39,4 @@ libnistp.a: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o
 .PHONY : speed
 .PHONY : clean
 clean:
-	rm *.o *.a garithtest ctrtest aestest aes256gcmtest gpacktest fep256test curvetest scalarmulttest boxtest scp256test hashtest ecdsatest curveknown ecdsaspeed ecdsaverifyspeed scalarmultspeed
+	rm *.o *.a $(TESTS) $(SPEED)
