@@ -32,7 +32,7 @@ scalarmultspeed: curve.o fep256.o randombytes.o scalarmultspeed.o scalarmult.o
 schnorrtest: curve.o fep256.o scp256.o verify.o blocks.o hash.o schnorrtest.o schnorr.o randombytes.o
 schnorrsignspeed: schnorrsignspeed.o curve.o fep256.o scp256.o verify.o blocks.o hash.o schnorr.o randombytes.o
 schnorrverifyspeed:schnorrverifyspeed.o curve.o fep256.o scp256.o verify.o blocks.o hash.o schnorr.o randombytes.o
-libnistp.a: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o load64.o verify.o fep256.o scalarmult.o curve.o box.o scp256.o ecdsa.o
+libnistp.a: ctr.o rijndael.o garith.o aes256gcm.o secretbox.o ghash.o unload64.o load64.o verify.o fep256.o scalarmult.o curve.o box.o scp256.o ecdsa.o schnorr.o
 	ar -r $@ $^
 .PHONY : all
 .PHONY : test
