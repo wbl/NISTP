@@ -10,11 +10,11 @@ int main(int argc, char *argv[]){
                          0x00, 0x00, 0x00, 0x00,
                          0x00, 0x00, 0x00, 0x00,
                          0x00, 0x00, 0x00, 0x00};
-  unsigned char m[32];
+  unsigned char m[256];
   bzero(m, 32);
-  unsigned char mlen=20; //let's test shorter messages
-  unsigned char c1[32];
-  unsigned char c2[32];
+  unsigned char mlen=200; //let's test shorter messages
+  unsigned char c1[256];
+  unsigned char c2[256];
   bzero(c1, 32);
   bzero(c2, 32);
   unsigned char nonce[12]={0x00, 0x00, 0x00, 0x00,
