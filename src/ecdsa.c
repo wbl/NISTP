@@ -40,7 +40,7 @@ void crypto_sign_ecdsa256sha512(unsigned char *sm, unsigned long long *smlen,
   memcpy(mhash, sk+32, 32);
   crypto_hash(kchar, mhash, 64);
   scp256_unpack(&k, kchar); //not FIPS compliant, but that's okay
-  p256scalarmult_base(&R, kchar); /*The issue is that this is incorrect*/
+  p256scalarmult_base(&R, kchar);
   p256pack(rchar, &R);
   scp256_unpack(&r, rchar); //this is just x
   scp256_unpack(&d, sk); //the secret exponent

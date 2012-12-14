@@ -12,7 +12,7 @@ int main(int argc, char *argv[]){
                          0x00, 0x00, 0x00, 0x00};
   unsigned char m[256];
   bzero(m, 32);
-  unsigned char mlen=200; //let's test shorter messages
+  unsigned char mlen=200; //test overflow
   unsigned char c1[256];
   unsigned char c2[256];
   bzero(c1, 32);
@@ -23,28 +23,24 @@ int main(int argc, char *argv[]){
   int failure;
   aes256gcmcrypt(c1, m, mlen, nonce, key);
   aes256gcmtomcrypt(c2, m, mlen, nonce, key);
+  printf("start\n");
+  printf("section box");
   failure=memcmp(c1,c2,32);
   if(failure){
-    printf("failure!\n");
-    for(int i=0; i<32; i++)
-      printf("%02x ", c1[i]);
-    printf("\n");
-    for(int i=0; i<32; i++)
-      printf("%02x ", c2[i]);
-    printf("\n");
+    printf("0\n");
   }else {
-    printf("success!\n");
+    printf("1\n");
   }
   if(aes256gcmdecrypt(m, c2, mlen, nonce, key)){ /*someone else made it*/
-    printf("failure!\n");
+    printf("0\n");
   }else {
-    printf("success!\n");
+    printf("1\n");
   }
-  c2[1]=0; /*Screw stuff*/
+  c2[1]^=1; /*Screw stuff*/
   if(! aes256gcmdecrypt(m, c2, mlen, nonce, key)){
-    printf("failure!\n");
+    printf("0\n");
   }else {
-    printf("success!\n");
+    printf("1\n");
   }
   exit(0);
 }
