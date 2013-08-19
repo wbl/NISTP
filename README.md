@@ -8,9 +8,10 @@ cryptography easy to use. NISTP puts together P256, AES256GCM into the
 crypto_box_p256aes256gcm function, and includes ECDSA support.
 
 Building requires only a C compiler. To build ./configure.sh && cd bin
-&& make Libtomcrypt is required to build tests. PARI is required to
+&& make. Libtomcrypt is required to build tests. PARI is required to
 interpret some tests, and there is an awk script for summarizing
-tests. There is currently no configure script.
+tests. There is currently no attempt to discover things. There are timing
+leaks from the AES implementation.
 
 Using NISTP
 ===
