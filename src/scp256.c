@@ -100,7 +100,7 @@ static void scp256_from32bytes(scp256 *r, const unsigned char x[32])
   barrett_reduce(r, t);
 }
 
-static void scp256_from64bytes(scp256 *r, const unsigned char x[64])
+void scp256_from64bytes(scp256 *r, const unsigned char x[64])
 {
   int i;
   unsigned int t[64] = {0};
