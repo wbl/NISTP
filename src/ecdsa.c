@@ -41,7 +41,7 @@ void crypto_sign_ecdsa256sha512(unsigned char *sm, unsigned long long *smlen,
   memcpy(mhash, sk+32, 32);
   crypto_hash(kchar, mhash, 64);
   scp256_from64bytes(&k, kchar); //not FIPS compliant, but that's okay
-  scp256_unpack(&k, expt);
+  scp256_pack(expt, &k);
   p256scalarmult_base(&R, expt);
   p256pack(rchar, &R);
   scp256_unpack(&r, rchar); //this is just x
