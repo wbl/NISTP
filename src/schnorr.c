@@ -27,12 +27,14 @@ void crypto_sign_nistp256schnorr(unsigned char *sm,
   scp256 t;
   unsigned char hash[64];
   unsigned char temp[64];
+  unsigned char kchar[32];
   *smlen=mlen+64;
   memcpy(sm+32, m, mlen);
   memcpy(sm+mlen+32, sk+32, 32); //copy the tail entropy over
   crypto_hash(hash, sm+32, mlen+32);//hash message plus tail
-  scp256_unpack(&k, hash);
-  p256scalarmult_base(&r, hash);
+  scp256_from64bytes(&k, hash);
+  scp256_pack(kchar, &k);
+  p256scalarmult_base(&r, kchar);
   p256pack(temp, &r); //put r at end of message
   memcpy(sm+mlen+32, temp, 32);
   scp256_unpack(&x, sk);
