@@ -100,4 +100,5 @@ int main(){
     printf("==Mod(1,m)");
     printf(")\n");
   }
+  return 0;
 }

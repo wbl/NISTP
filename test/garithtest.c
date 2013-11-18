@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "garith.h"
 
-int main(int argc, int argv[]){
+int main(int argc, char **argv){
   /*Plan: test multiplication by creating table of powers of some element.*/
   /*Have sage verify the correctness*/
   gf2128 elt;
