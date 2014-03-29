@@ -150,6 +150,15 @@ void p256scalarmult(point *c, point *a, const unsigned char e[32]){
   p256cmov(c, &current, 1);
 }
 
+void p256dblmult_base(point *c, point *a, const unsigned char ea[32],
+                      const unsigned char ebase[32]){
+  point t1;
+  point t2;
+  p256scalarmult(&t1, a, ea);
+  p256scalarmult_base(&t2, ebase);
+  p256add_total(c, &t1, &t2);
+}
+
 void p256pack(unsigned char out[64], point *c){
   /*Using Jacobian coordinates*/
   fep256 a, aa, x3, y3, t0;

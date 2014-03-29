@@ -13,3 +13,5 @@ extern unsigned int  p256oncurvefinite(point *c);
 extern void p256xpack(unsigned char c[32], point *a);
 extern void p256base(point *c);
 extern void p256add_total(point *c, point *a, point *b);
+extern void p256dblmult_base(point *c, point *a, const unsigned char e1[32],
+                             const unsigned char e2[32]);
