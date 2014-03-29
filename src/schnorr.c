@@ -64,7 +64,7 @@ int crypto_sign_open_nistp256schnorr(unsigned char *m,
   if(!p256oncurvefinite(&y)) return -1; //validate public key
   p256scalarmult(&ye, &y, hash); //calculate ye
   p256scalarmult_base(&gs, sm); //calculate gs
-  p256add(&rsig, &ye, &gs);
+  p256add_total(&rsig, &ye, &gs);
   if(!p256oncurvefinite(&rsig)) return -1;
   p256pack(rv, &rsig);
   return verify32(sm+smlen-32, rv);

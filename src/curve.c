@@ -81,6 +81,30 @@ void p256dbl(point *c, point *a){
   fep256sub(&c->y, &t12, &t11);
 }
 
+void p256add_total(point *c, point *a, point *b){
+  /*HEHCC Section 13.2.1*/
+  /*Not constant time*/
+  /*Using in signatures*/
+  fep256 x1z2, x2z1, y1z2, y2z1, t0, t1;
+  fep256mul(&x1z2, &a->x, &b->z);
+  fep256mul(&x2z1, &a->z, &b->x);
+  fep256sub(&t0, &x1z2, &x2z1);
+  if(fep256iszero(&t0)){
+    fep256mul(&y1z2, &a->y, &b->z);
+    fep256mul(&y2z1, &a->z, &b->y);
+    fep256sub(&t1, &y1z2, &y2z1); //Only two choices: same y or inverses
+    if(fep256iszero(&t1)){
+      p256dbl(c, a);
+    } else {
+      fep256setone(&c->x);
+      fep256setone(&c->y);
+      fep256setzero(&c->z);
+    }
+  }else{ /*Distinct x coordinates*/
+    p256add(c, a, b);
+  }
+}
+
 void p256cmov(point *c, point *b, unsigned int a){
   fep256cmov(&c->x, &b->x, a);
   fep256cmov(&c->y, &b->y, a);
