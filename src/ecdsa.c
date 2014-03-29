@@ -97,6 +97,7 @@ int crypto_sign_open_ecdsa256sha512(unsigned char *m, unsigned long long *mlen,
   p256scalarmult_base(&u1B,u1char);
   p256scalarmult(&u2Q, &Q, u2char);
   p256add(&result, &u1B, &u2Q);
+  if(!p256oncurvefinite(&result)) return -1;
   p256pack(resultchar, &result);
   scp256_unpack(&newr, resultchar);
   scp256_sub(&t, &newr, &r);
