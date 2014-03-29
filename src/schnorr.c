@@ -61,6 +61,7 @@ int crypto_sign_open_nistp256schnorr(unsigned char *m,
   memcpy(m, sm+32, smlen-64); //copy out message
   crypto_hash(hash, sm+32, smlen-32); //H(M||r)
   p256unpack(&y, pk);
+  if(!p256oncurvefinite(&y)) return -1; //validate public key
   p256scalarmult(&ye, &y, hash); //calculate ye
   p256scalarmult_base(&gs, sm); //calculate gs
   p256add(&rsig, &ye, &gs);
