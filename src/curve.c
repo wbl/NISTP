@@ -81,30 +81,6 @@ void p256dbl(point *c, point *a){
   fep256sub(&c->y, &t12, &t11);
 }
 
-void p256add_total(point *c, point *a, point *b){
-  /*HEHCC Section 13.2.1*/
-  /*Not constant time*/
-  /*Using in signatures*/
-  fep256 x1z2, x2z1, y1z2, y2z1, t0, t1;
-  fep256mul(&x1z2, &a->x, &b->z);
-  fep256mul(&x2z1, &a->z, &b->x);
-  fep256sub(&t0, &x1z2, &x2z1);
-  if(fep256iszero(&t0)){
-    fep256mul(&y1z2, &a->y, &b->z);
-    fep256mul(&y2z1, &a->z, &b->y);
-    fep256sub(&t1, &y1z2, &y2z1); //Only two choices: same y or inverses
-    if(fep256iszero(&t1)){
-      p256dbl(c, a);
-    } else {
-      fep256setone(&c->x);
-      fep256setone(&c->y);
-      fep256setzero(&c->z);
-    }
-  }else{ /*Distinct x coordinates*/
-    p256add(c, a, b);
-  }
-}
-
 void p256cmov(point *c, point *b, unsigned int a){
   fep256cmov(&c->x, &b->x, a);
   fep256cmov(&c->y, &b->y, a);
@@ -116,6 +92,47 @@ void p256identity(point *c){
   fep256setone(&c->y);
   fep256setzero(&c->z);
 }
+
+
+void p256add_total(point *c, point *a, point *b){
+  /*HEHCC Section 13.2.1*/
+  /*Not constant time*/
+  /*Using in signatures*/
+  fep256 x1z2, x2z1, y1z2, y2z1, t0, t1;
+  /*First we check for identity*/
+  if(fep256iszero(&a->z)){
+    p256cmov(c, b, 1);
+  }else if(fep256iszero(&b->z)){
+    p256cmov(c, a, 1);
+  } else {
+    fep256mul(&x1z2, &a->x, &b->z);
+    fep256mul(&x2z1, &a->z, &b->x);
+    fep256sub(&t0, &x1z2, &x2z1);
+    if(fep256iszero(&t0)){
+      fep256mul(&y1z2, &a->y, &b->z);
+      fep256mul(&y2z1, &a->z, &b->y);
+      fep256sub(&t1, &y1z2, &y2z1); //Only two choices: same y or inverses
+      if(fep256iszero(&t1)){
+        p256dbl(c, a);
+      } else {
+        fep256setone(&c->x);
+        fep256setone(&c->y);
+        fep256setzero(&c->z);
+      }
+    }else{ /*Distinct x coordinates*/
+      p256add(c, a, b);
+    }
+  }
+}
+
+void p256dbl_total(point *c, point *a){
+  if(fep256iszero(&a->z)){
+    p256identity(c);
+  } else {
+    p256dbl(c, a);
+  }
+}
+        
 void p256scalarmult(point *c, point *a, const unsigned char e[32]){
   unsigned int seen=0;
   unsigned int bit=0;
@@ -152,11 +169,23 @@ void p256scalarmult(point *c, point *a, const unsigned char e[32]){
 
 void p256dblmult_base(point *c, point *a, const unsigned char ea[32],
                       const unsigned char ebase[32]){
-  point t1;
-  point t2;
-  p256scalarmult(&t1, a, ea);
-  p256scalarmult_base(&t2, ebase);
-  p256add_total(c, &t1, &t2);
+  /*Shamir Trick*/
+  point current;
+  point bp;
+  p256unpack(&bp, basep);
+  p256identity(&current);
+  for(int i=0; i<32; i++){
+    for(int j=7; j>=0; j--){
+      p256dbl_total(&current, &current);
+      if(ebase[i] & (0x01 << j)){
+        p256add_total(&current, &current, &bp);
+      }
+      if(ea[i] & (0x01 << j)){
+        p256add_total(&current, &current, a);
+      }
+    }
+  }
+  p256cmov(c, &current, 1);
 }
 
 void p256pack(unsigned char out[64], point *c){
