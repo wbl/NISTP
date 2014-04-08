@@ -172,19 +172,21 @@ void p256dblmult_base(point *c, point *a, const unsigned char ea[32],
   /*Shamir Trick*/
   point current;
   point bp;
+  point table[4];
+  int index;
   p256unpack(&bp, basep);
   p256identity(&current);
+  p256identity(&table[0]);
+  p256cmov(&table[1], a, 1);
+  p256cmov(&table[2], &bp, 1);
+  p256add_total(&table[3], &table[2], &table[1]);
   for(int i=0; i<32; i++){
     for(int j=7; j>=0; j--){
       p256dbl_total(&current, &current);
-      if(ebase[i] & (0x01 << j)){
-        p256add_total(&current, &current, &bp);
-      }
-      if(ea[i] & (0x01 << j)){
-        p256add_total(&current, &current, a);
+      index = 2*((ebase[i]>>j)&0x01) + ((ea[i]>>j)&0x01);
+      p256add_total(&current, &current, &table[index]);
       }
     }
-  }
   p256cmov(c, &current, 1);
 }
 
