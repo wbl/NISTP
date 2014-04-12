@@ -1,2 +1,5 @@
-*ECDSA is comming
 *NACLize source code, submit to DJB
+*Add FRAMA-C annotations and proofs of memory safety
+*Also some numeric properties
+*Make Ghash faster
+*Use AES-NI when available
