@@ -1,5 +1,5 @@
 VPATH = ../test:../src
-CC = gcc -ggdb
+CC = clang-mp-3.5 -ggdb
 CCOPTS = -std=c99 -fPIC -O3 -funroll-loops -m64
 IOPTS = -I../src -I../test -I/opt/local/include
 LOPTS = -L/opt/local/lib
