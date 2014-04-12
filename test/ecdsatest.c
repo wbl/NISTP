@@ -9,12 +9,14 @@ int main(){
   unsigned char *sm=malloc(strlen(m)+65);
   unsigned long long smlen;
   unsigned long long mlen=strlen(m)+1;
-  crypto_sign_keypair_ecdsa256sha512(pk, sk);
-  crypto_sign_ecdsa256sha512(sm, &smlen, m, mlen, sk);
-  if(crypto_sign_open_ecdsa256sha512(m, &mlen, sm, smlen, pk)){
-    printf("Opening failed!\n");
-  }else{
-    printf("%s\n", m);
+  for(int i=0; i<10; i++){
+    crypto_sign_keypair_ecdsa256sha512(pk, sk);
+    crypto_sign_ecdsa256sha512(sm, &smlen, m, mlen, sk);
+    if(crypto_sign_open_ecdsa256sha512(m, &mlen, sm, smlen, pk)){
+      printf("0\n");
+    }else{
+      printf("1\n");
+    }
   }
   exit(0);
 }

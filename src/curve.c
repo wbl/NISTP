@@ -169,21 +169,30 @@ void p256scalarmult(point *c, point *a, const unsigned char e[32]){
 
 void p256dblmult_base(point *c, point *a, const unsigned char ea[32],
                       const unsigned char ebase[32]){
-  /*Shamir Trick*/
+  /*Two-bit combined table*/
   point current;
   point bp;
-  point table[4];
+  point table[16];
   int index;
   p256unpack(&bp, basep);
   p256identity(&current);
   p256identity(&table[0]);
-  p256cmov(&table[1], a, 1);
-  p256cmov(&table[2], &bp, 1);
-  p256add_total(&table[3], &table[2], &table[1]);
+  /*Ebase changes faster: 4*ebasebits+eabits*/
+  for(int i=1; i<4; i++){
+    p256add_total(&table[i], &table[i-1], a);
+  }
+  for(int j=1; j<4; j++){
+    p256add_total(&table[4*j], &table[4*(j-1)], &bp);
+    for(int i=1; i<4; i++){
+      p256add_total(&table[4*j+i], &table[4*j+i-1], a);
+    }
+  }
+
   for(int i=0; i<32; i++){
-    for(int j=7; j>=0; j--){
+    for(int j=6; j>=0; j-=2){
       p256dbl_total(&current, &current);
-      index = 2*((ebase[i]>>j)&0x01) + ((ea[i]>>j)&0x01);
+      p256dbl_total(&current, &current);
+      index = 4*((ebase[i]>>j)&0x03) + ((ea[i]>>j)&0x03);
       p256add_total(&current, &current, &table[index]);
       }
     }
