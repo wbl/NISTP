@@ -2,13 +2,15 @@
 #include <fcntl.h>
 #include <unistd.h>
 void randombytes(unsigned char *bytes, unsigned int len){
-  /*Assuming no errors*/
-  int fd;
+  int fd=-1;
   int temp;
-  fd=open("/dev/random", O_RDONLY);
+  while(fd==-1){
+    fd=open("/dev/random", O_RDONLY);
+  }
   while(len){
     temp=read(fd, bytes, len);
-    fd += temp;
+    bytes += temp;
     len -= temp;
   }
+  close(fd);
 }
