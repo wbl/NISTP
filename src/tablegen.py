@@ -88,6 +88,8 @@ def paddbits(x):
     return temp
 
 def pointpow(p, n):
+    if n == 0:
+        return (1,1,0)
     if n == 1:
         return p
     elif (n%2)==1:
@@ -121,49 +123,41 @@ def lefttoright(p,n):
             seen=1
     return current
 
-m = 115792089210356248762697446949407573529996955224135760342422259061068512044369
+def printpoint(p):
+    x,y = toaffine(p)
+    print "{",
+    print hexout(x),
+    print ",",
+    print hexout(y),
+    print "}",
 
-def base256(s):
-    return reduce(lambda x, y: x*256+y,map(ord, s),0)
+def hexout(n):
+    hexn = hex(n)[2:-1]
+    res = 64 - len(hexn)
+    padded = ('0'*res)+hexn
+    ret=''
+    for i in range(0,31):
+        ret+=("0x%s%s,"%(padded[2*i], padded[2*i+1]))
+    ret+=("0x%s%s"%(padded[62], padded[63]))
+    return ret
 
-def tonumber(s):
-    return base256(s[0:32])
+def tablegen():
+    print "unsigned char precomp[32][16][64]={"
+    for i in range(0, 32):
+        print "\t{"
+        for j in range(0, 16):
+            printpoint(pointpow(basepoint, (2**(8*i))*j))
+            if j != 15:
+                print ",\n",
+            print"}",
+            if i != 31:
+                print ",\n",
+print "};"
 
-def invm(x):
-    return pow(x, m-2, m)
-
-def sign(e, d,k):
-    r,_ = toaffine(pointpow(basepoint, k))
-    r=r%m
-    s=invm(k)*(e+r*d)%m
-    return (r,s,e)
-
-def verify(r,s, e, px, py):
-    Q=(px, py, 1)
-    w=invm(s)
-    u1=(e*w)%m
-    u2=(r*w)%m
-    v,_=toaffine(pointadd(pointpow(basepoint, u1), pointpow(Q, u2)))
-    v = v%m
-    print u1, u2, v
-    return v==r
-
-def test(z, privkey, k):
-    (x,y)=toaffine(pointpow(basepoint, privkey))
-    (r,s,e)=sign(z, privkey,k)
-    if verify(r,s,e, x,y):
-        print "Ok"
-    else:
-        print "Not Ok"
-
-def testexp(p,n):
-    (x,y)=toaffine(lefttoright(p,n))
-    (xp, yp)=toaffine(pointpow(p, n))
-    if(x==xp and yp==y):
-        print "OK"
-    else:
-        print "Not Ok"
-
+for i in range(0,32):
+    for j in range(0,16):
+        print (2**(8*i))*j
+    
 
 
 
